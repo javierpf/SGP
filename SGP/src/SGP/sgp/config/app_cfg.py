@@ -40,5 +40,4 @@ base_config.use_sqlalchemy=False
 base_config.use_transaction_manager=False
 base_config.auth_backend=None
 base_config.use_toscawidgets=False
-
 base_config.use_toscawidgets = True

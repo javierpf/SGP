@@ -39,7 +39,7 @@ class UsuarioManager():
         DBSession.delete(user)
         transaction.commit()
     
-    def deleteByid(self, id):
+    def deleteById(self, id):
         u = self.getById(id)
         DBSession.delete(u)
         transaction.commit()
@@ -47,4 +47,8 @@ class UsuarioManager():
     def deleteByLogin(self,name):
         u = self.getByLogin(name)
         DBSession.delete(u)
-        transaction.commit()    
+        transaction.commit()
+    def buscar(self, buscado):
+        lista = DBSession.query(Usuario).filter(Usuario.nombre.op('~*')(buscado)).all()
+        return lista
+        
