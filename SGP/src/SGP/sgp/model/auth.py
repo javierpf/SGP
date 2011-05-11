@@ -96,9 +96,9 @@ class Campo(DeclarativeBase):
     __tablename__ = 'campo'
 
     #column definitions
+    nombre = Column(u'nombre', VARCHAR(length=30, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
     id_campo = Column(u'id_campo', INTEGER(), primary_key=True, nullable=False)
     id_tipo_item = Column(u'id_tipo_item', INTEGER(), ForeignKey('tipo_item.id_tipo_item'), nullable=False)
-    nombre = Column(u'nombre', VARCHAR(length=30, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
     tipo_dato = Column(u'tipo_dato', INTEGER(), nullable=False)
 
     #relation definitions
@@ -108,10 +108,11 @@ class Fase(DeclarativeBase):
     __tablename__ = 'fase'
 
     #column definitions
+    nombre = Column(u'nombre', VARCHAR(length=45, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
     descripcion = Column(u'descripcion', TEXT(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False))
     id_fase = Column(u'id_fase', INTEGER(), primary_key=True, nullable=False)
     id_proyecto = Column(u'id_proyecto', INTEGER(), ForeignKey('proyecto.id_proyecto'), nullable=False)
-    nombre = Column(u'nombre', VARCHAR(length=45, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
+    
 
     #relation definitions
     items = relationship("Item", backref="fase")
@@ -166,18 +167,22 @@ class Proyecto(DeclarativeBase):
     __tablename__ = 'proyecto'
 
     #column definitions
-    administrador = Column(u'administrador', INTEGER(), ForeignKey('usuario.id_usuario'), nullable=False)
-    descripcion = Column(u'descripcion', TEXT(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False))
-    id_proyecto = Column(u'id_proyecto', INTEGER(), primary_key=True, nullable=False)
     nombre = Column(u'nombre', VARCHAR(length=100, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
+    descripcion = Column(u'descripcion', TEXT(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False))
+    estado = Column(u'estado', VARCHAR(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False))
+    costo_estimado = Column(u'costo_estimado', INTEGER())  
+    fecha_inicio = Column(u'fecha_inicio', DATE())  
+    fecha_finalizacion = Column(u'fecha_finalizacion', DATE())
+    id_proyecto = Column(u'id_proyecto', INTEGER(), primary_key=True, nullable=False)
+    id_administrador = Column(u'administrador', INTEGER(), ForeignKey('usuario.id_usuario'), nullable=False)
 
     #relation definitions
     fases = relationship("Fase", backref="proyecto")
+    #administrador =relationship('Usuario', backref='proyecto')
+    administrador = relationship("Usuario", backref=backref("proyecto", uselist=False))
     
 class PermisoRecurso(DeclarativeBase):
-    __table__ = permiso_recurso
-
-    
+    __table__ = permiso_recurso    
     #relation definitions
     permiso = relationship("Permiso", backref=backref("permiso_recurso", uselist=False))
     recurso = relationship("Recurso", backref=backref("permiso_recurso", uselist=False))
@@ -193,12 +198,10 @@ class Recurso(DeclarativeBase):
 
 class Relacion(DeclarativeBase):
     __tablename__ = 'relacion'
-
     #column definitions
     id_item1 = Column(u'id_item1', INTEGER(), ForeignKey('item.id_item'), primary_key=True, nullable=False)
     id_item2 = Column(u'id_item2', INTEGER(), ForeignKey('item.id_item'), primary_key=True, nullable=False)
     tipo_relacion = Column(u'tipo_relacion', INTEGER(), primary_key=True, nullable=False)
-
     #relation definitions
 
 
@@ -221,16 +224,16 @@ class TipoItem(DeclarativeBase):
     id_fase = Column(u'id_fase', INTEGER(), ForeignKey('fase.id_fase'), nullable=False)
     id_tipo_item = Column(u'id_tipo_item', INTEGER(), primary_key=True, nullable=False)
     nombre = Column(u'nombre', VARCHAR(length=30, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
-
     #relation definitions
-
+    fase = relationship("Fase")
+    campos = relationship("Campo", backref=backref("tipo_item", uselist=False))
 
 class Usuario(DeclarativeBase):
     __tablename__ = 'usuario'
 
     #column definitions
-    id_usuario = Column(u'id_usuario', INTEGER(), primary_key=True, nullable=False)
     nombre = Column(u'nombre', VARCHAR(length=45, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
+    id_usuario = Column(u'id_usuario', INTEGER(), primary_key=True, nullable=False)
     password = Column(u'password', VARCHAR(length=35, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
     telefono = Column(u'telefono', VARCHAR(length=20, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
     usuario = Column(u'usuario', VARCHAR(length=20, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
@@ -241,7 +244,5 @@ class Usuario(DeclarativeBase):
 
 class RolUsuario(DeclarativeBase):
     __table__ = rol_usuario
-
-
     #relation definitions
     permisos_recursos = relationship("PermisoRecurso")

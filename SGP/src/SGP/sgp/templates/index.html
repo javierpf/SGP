@@ -8,33 +8,42 @@
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-  <title>Welcome to TurboGears 2.1, standing on the
-  shoulders of giants, since 2007</title>
-</head>
-
-<body>
-    ${sidebar_top()}
-  <div id="getting_started">
-    <h2>Presentation</h2>
-    <p>TurboGears 2 is rapid web application development toolkit designed to make your life easier.</p>
-    <ol id="getting_started_steps">
-      <li class="getting_started">
-        <h3>Code your data model</h3>
-        <p> Design your data model, Create the database, and Add some bootstrap data.</p>
-      </li>
-      <li class="getting_started">
-        <h3>Design your URL architecture</h3>
-        <p> Decide your URLs, Program your controller methods, Design your
-            templates, and place some static files (CSS and/or JavaScript). </p>
-      </li>
-      <li class="getting_started">
-        <h3>Distribute your app</h3>
-        <p> Test your source, Generate project documents, Build a distribution.</p>
-      </li>
-    </ol>
-  </div>
-  <div class="clearingdiv" />
-  <div class="notice"> Thank you for choosing TurboGears.
-  </div>
-</body>
+  <title>Pagina Principal</title>
+</head>	
+	<body>
+		<div id="getting_started">
+		<table width="100%">
+			<tr>
+	    		<td align="center">
+	    			<a href="/rol">
+                		<img src="${tg.url('/images/permiso.png')}" width="80" height="80" alt="ABM Rol" />
+            		</a>
+            	</td>
+            	<td align="center">
+            		<a href="/usuario">
+                		<img src="${tg.url('/images/usuarios.png')}" width="80" height="80" alt="ABM Permisos" />
+            		</a>
+            	</td>
+            	<td align="center">
+            		<a href="/proyecto">
+                		<img src="${tg.url('/images/proyecto.png')}" width="80" height="80" alt="ABM Permisos" />
+            		</a>
+            	</td>            	
+            	<td align="center">
+            		<a href="#">
+                		<img src="${tg.url('/images/sistema.png')}" width="80" height="80" alt="ABM Permisos" />
+            		</a>
+            	</td>
+            </tr>
+            <tr>
+            	<td align="center"><label> Roles </label></td>
+            	<td align="center"><label> Usuarios </label></td>
+            	<td align="center"><label> Proyectos </label></td>
+            	<td align="center"><label> Sistema </label></td>
+            </tr>
+         </table>            
+	  	</div>
+	  	<div class="clearingdiv" />
+	  	<div class="notice"> Esta pagina no deberia ser la principal. </div>
+	</body>
 </html>
