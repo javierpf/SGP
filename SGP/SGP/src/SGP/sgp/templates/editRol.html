@@ -1,0 +1,79 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<title>${tmpl_context.title} - New Rol</title>
+<head>
+<style>
+#menu_items {
+  padding:0px 12px 0px 2px;
+  list-style-type:None
+  }
+</style>
+</head>
+<body class="tundra">
+  <div style="height:0px;"> &nbsp; </div>
+
+  <div style="float:left; padding-left:0px;">
+        <ul id="menu_items" py:if="hasattr(tmpl_context, 'menu_items')">
+            <li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s/">$item.__name__</a></li>
+       </ul>
+  </div>
+	<div style="font-weight:bold" py:choose="" align="center">
+	  <span py:when="tipo == 1"><h2>Editando Rol para recursos del sistema</h2></span>
+	  <span py:when="tipo == 0"><h2>Editando Rol de Sistema</h2></span>
+	</div> 
+  
+	  <form action = "/rol/put/?id_rol=$id_rol" method="POST">
+		<table border="0" cellspacing="0" cellpadding="2">
+	        <tr id="nombre.container" class="even" title=""> 
+	            <td class="labelcol"> 
+	                <label>Nombre</label> 
+	            </td>
+	            <td class="fieldcol"> 
+	                <input type="text" name="nombre" value="$nombre" /> 
+	            </td> 
+	        </tr>
+	        <tr>
+	            <td class="labelcol"> 
+	                <label>Descripcion</label> 
+	            </td> 
+	            <td class="fieldcol"> 
+	                <input type="text" name="descripcion" value="$descripcion" /> 
+	            </td> 
+	        </tr>
+	        <tr>
+				<td class="labelcol"> 
+				    <label>Permisos</label> 
+				</td> 
+				<td>
+					<select multiple="permisos" size="1" name="permisos" >
+						<span py:for="t in permisos">
+							<div py:choose="">
+							  <span py:when="t.activo == 1"><option value="${t.id}" selected = "True"> ${t.nombre} </option></span>
+							  <span py:when="t.activo == 0"><option value="${t.id}"> ${t.nombre} </option></span>
+							</div>
+						</span>
+					</select>									
+	            </td>
+	            </tr><tr align="rigth">
+	            <td colspan="2">
+					<div align="right">
+						<button type="submit" name="tipo" value="$tipo" title="Aceptar">
+							<img src="${tg.url('/images/ok.png')}" alt="Aceptar" width="28" height="28" />
+							<br /> Aceptar
+						</button>
+						<button type="submit" name="vaccion" value="" title="Aceptar">
+	
+							<img src="${tg.url('/images/error.png')}" alt="Cancelar" width="24" height="28" />
+							<br /> Cancelar
+						</button>
+					</div>			
+	        	</td>
+				</tr>
+	       </table>
+	       </form>
+  <div style="height:0px; clear:both;"> &nbsp; </div>
+</body>
+</html>

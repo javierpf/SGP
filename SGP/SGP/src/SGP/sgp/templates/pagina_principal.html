@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Pagina Principal</title>
+</head>	
+	<body class="tundra">
+	<table>
+		<tr>
+			<td>
+				<table>
+					<TR>
+						<TD id="name_column" >
+							<label> Nombre:</label>
+						</TD>
+						<TD id="content_column">
+							$usuario
+						</TD>
+					</TR>
+					<TR>
+						<TD id="name_column" >
+							<label> Roles: </label>
+						</TD>
+						<TD id="content_column">
+								<ul>
+							  		<li py:for="l in roles">${l.nombre}</li>
+								</ul>
+						</TD>
+					</TR>
+					<TR>
+						<TD id="name_column" >
+							<label> Proyectos </label>
+						</TD>
+						<td id="content_column">
+							<ul>
+						  		<li py:for="l in proyectos">
+						  			<a href="/fase/fases_por_proyecto?id_proyecto=$l.id_proyecto"> ${l.nombre} </a>
+						  		</li>
+							</ul>
+						</td>							
+					</TR>
+				</table>
+			</td>
+			<td>
+				<table>
+					<tr>
+						<td align="center">
+	    					<a href="/usuario/$id_usuario/edit">
+                				<img src="${tg.url('/images/editar.png')}" width="80" height="80" alt="ABM Rol" />
+                				<br /> Editar mi perfil
+            				</a>
+            			</td>
+					</tr>
+					<tr>
+						<td align="center">
+	    					<a href="/proyecto/new">
+                				<img src="${tg.url('/images/agregar.png')}" width="80" height="80" alt="ABM Rol" />
+                				<br /> Crear un Proyecto Nuevo
+            				</a>
+            			</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	</body>
+</html>

@@ -1,0 +1,12 @@
+<form action="/item/adjuntar_archivo?id_item=${id_item}" enctype="multipart/form-data" method="post">
+		<input type="file" name="datafile" size="40"/>
+	
+	<div>
+		<input type="submit" value="Send"/>
+	</div>
+	<a href="/item/items?id_fase=${id_fase}" class="add_link">
+							<img src="${tg.url('/images/ok.png')}" alt="Terminar" width="28" height="28" />
+							<br /> Terminar
+	</a>
+	
+</form>

@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="master.html" />
+<head>
+  <title>${tmpl_context.title} -ABM ${model} </title>
+
+<style>
+#menu_items {
+  padding:0px 12px 0px 2px;
+  list-style-type:None
+  }
+</style>
+</head>
+<body class="tundra">
+
+  <div style="height:0px;"> &nbsp; </div>
+  <div id="main_content">
+    <div style="float:left; padding-left:0px;">
+        <ul id="menu_items" py:if="hasattr(tmpl_context, 'menu_items')">
+            <li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s">$item.__name__</a></li>
+        </ul>
+    </div>
+    <div>
+      <h1 style="margin-top:1px;">$model Listing</h1>
+      <form action= "/proyecto/buscar" method="post" >
+			<input type="text" name="parametro" />
+			<button type="submit" value="Buscar">
+            	<img src="${tg.url('/images/buscar.png')}" width="28" height="28" alt="ABM Usuarios" />            		
+			</button>
+		</form>
+      <div style="margin:1ex 0; width:90%">
+        <a href='new/' class="add_link">New $model</a>
+        <span py:if="value_list" style="margin-left:2em" py:content="tmpl_context.paginators.value_list.pager(link='../%ss/'%model.lower())"/>
+      </div>
+      <div class="crud_table">
+        ${XML(tmpl_context.widget(value=value_list, action='../'+model.lower()+'s.json'))}
+      <div>
+        <a href="/proyecto" class="add_link"> Todos </a>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div style="clear:both;"/>
+</body>
+</html>
