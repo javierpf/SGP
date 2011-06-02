@@ -18,7 +18,20 @@
 <body py:match="body" py:attrs="select('@*')">
   ${header()}
   <ul id="mainmenu">
-    <li class="first"><a href="${tg.url('/')}" class="${('', 'active')[defined('page') and page=='index']}">Inicio</a></li>
+  <span py:if="request.identity">
+  	<span py:choose="">
+  		<span py:when="session['admin_tipo']=='sistema'"> 
+  			<li  class="first"><a href="${tg.url('/principal')}">Administracion de Proyectos</a></li>
+  		</span>
+  		<span py:when="session['admin_tipo']=='proyecto'">
+		    <li  class="first"><a href="${tg.url('/sistema')}" >Administracion de Sistema</a></li>
+		</span>
+		<span py:when="session['admin_tipo']=='ambos'" >
+		    <li class="first"><a href="${tg.url('/principal')}">Administracion de Proyectos</a></li>
+		    <li><a href="${tg.url('/sistema')}">Administracion de Sistema</a></li>
+		</span>
+    </span>
+    </span>
         <li><a href="${tg.url('/about')}" class="${('', 'active')[defined('page') and page=='about']}">About</a></li>
         <li py:if="tg.auth_stack_enabled"><a href="${tg.url('/auth')}" class="${('', 'active')[defined('page') and page=='auth']}">Authentication</a></li>
         <li><a href="${tg.url('/environ')}" class="${('', 'active')[defined('page') and page=='environ']}">WSGI Environment</a></li>

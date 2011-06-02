@@ -52,6 +52,7 @@ sgp/public/images/star.png
 sgp/public/images/strype2.png
 sgp/public/images/under_the_hood_blue.png
 sgp/public/images/warning.png
+sgp/public/javascript/empty
 sgp/templates/__init__.py
 sgp/templates/about.html
 sgp/templates/authentication.html

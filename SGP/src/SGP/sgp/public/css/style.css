@@ -13,7 +13,23 @@ body {
 	font-size: 12px;
 	font-family:"Lucida Grande","Lucida Sans Unicode",geneva,verdana,sans-serif;
 }
-
+#name_column {
+	font: bolder 11px verdana, arial, helvetica, sans-serif;
+	background: #98AFC7;
+	font-size: 120%;
+	font-color: white;
+	vertical-align: middle;
+	text-align: right;
+	width: 100px;
+  }
+#content_column{
+	font: normal 11px verdana, arial, helvetica, sans-serif;
+	background: #E3E4FA;
+	font-size: 120%;
+	vertical-align: middle;
+	text-align: left;
+	width: 250px;
+}
 a {
 	color: #286571;
 }

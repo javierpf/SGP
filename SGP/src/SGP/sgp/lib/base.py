@@ -4,7 +4,9 @@
 
 from tg import TGController, tmpl_context
 from tg.render import render
+from tg import request
 from pylons.i18n import _, ungettext, N_
+import sgp.model as model
 
 __all__ = ['BaseController']
 
@@ -24,4 +26,6 @@ class BaseController(TGController):
         # the request is routed to. This routing information is
         # available in environ['pylons.routes_dict']
 
+        request.identity = request.environ.get('repoze.who.identity')
+        tmpl_context.identity = request.identity
         return TGController.__call__(self, environ, start_response)

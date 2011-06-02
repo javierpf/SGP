@@ -13,6 +13,7 @@
 </style>
 </head>
 <body class="tundra">
+
   <div style="height:0px;"> &nbsp; </div>
   <div id="main_content">
     <div style="float:left; padding-left:0px;">
@@ -20,9 +21,9 @@
             <li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s">$item.__name__</a></li>
         </ul>
     </div>
-    <div style="float:left; width:80%">
+    <div>
       <h1 style="margin-top:1px;">$model Listing</h1>
-      <form action= "/usuario/buscar" method="post" >
+      <form action= "/proyecto/buscar" method="post" >
 			<input type="text" name="parametro" />
 			<button type="submit" value="Buscar">
             	<img src="${tg.url('/images/buscar.png')}" width="28" height="28" alt="ABM Usuarios" />            		
@@ -32,7 +33,7 @@
         <a href='new/' class="add_link">New $model</a>
         <span py:if="value_list" style="margin-left:2em" py:content="tmpl_context.paginators.value_list.pager(link='../%ss/'%model.lower())"/>
       </div>
-      <div class="crud_table" style="height:50%; width:90%">
+      <div class="crud_table">
         ${XML(tmpl_context.widget(value=value_list, action='../'+model.lower()+'s.json'))}
       <div>
         <a href="/proyecto" class="add_link"> Todos </a>

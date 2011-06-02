@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Desasignacion de rol</title>
+</head>	
+	<body>
+		<div id="getting_started">
+			<div class="notice" style="margin:0 100 0 200;"> Desasignacion Rol:  $nombre </div>
+	  	</div>
+	 	<span py:choose="">
+    	<span py:when="session['admin_sistema']==False">
+			<h3 style="margin-top:1px;">
+	      	<a href = "/principal">Proyectos</a>
+	      	<label> / </label>
+	      	<a href="/fase/fases_por_proyecto?id_proyecto=${session['id_proyecto']}"> ${session['proyecto']} </a>
+	      	<label> / </label>
+	      	<a href = "/rol?id_proyecto=${session['id_proyecto']}"> Roles </a>
+	      	<label> / </label>
+	      	<a> Desasignacion de rol </a>
+	      	
+	      </h3>
+	      </span>
+	      </span>
+	<form action="/rol/s_desasignar" method="POST" name="assignForm">
+		<input type="hidden" name="id_rol" value="$id"/>
+	  	<table>
+	  		<tr>
+	  			<td>
+				  	<div class="crud_table" style="height:100%; width:100%"> 
+			        	<div> 
+							<table class="grid" border = "1">
+			        			<thead>
+									<th>Permisos</th>
+			            		</thead>
+			            		<tbody>
+			            			<tr py:for="p in permisos">
+						                <td>
+						                	${p.nombre}
+						                </td>
+						            </tr>   
+			        			</tbody>
+				        	</table>
+			        	</div>
+			        </div>
+		        </td>
+		        <td>
+				  	<div class="crud_table" style="height:100%; width:100%"> 
+			        	<div> 
+							<table class="grid" border = "1">
+			        			<thead>
+									<th>Marcar para quitar</th>
+			            		</thead>
+			            		<tbody>
+			            			<tr py:for="user in usuarios">
+						                <td>
+											<input type="checkbox" name="usuarios" value="${user.id_usuario}" /> ${user.nombre}								
+						                </td>
+						            </tr>   
+			        			</tbody>
+				        	</table>
+			        	</div>
+			        </div>
+		        </td>
+	        </tr>
+	        <tr>
+	        	<td>
+					<div align="right">
+						<button type="submit" name="id" value="Aceptar" title="Aceptar">
+							<img src="${tg.url('/images/ok.png')}" alt="Aceptar" width="28" height="28" />
+							<br /> Aceptar
+						</button>
+						<button type="submit" name="vaccion" value="modificar" title="Aceptar">
+							<img src="${tg.url('/images/error.png')}" alt="Cancelar" width="24" height="28" />
+							<br /> Cancelar
+						</button>
+					</div>			
+        		</td>
+        	</tr>
+        </table>
+        </form>	
+	</body>
+</html>

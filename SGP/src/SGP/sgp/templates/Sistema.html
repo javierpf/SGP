@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Pagina Principal</title>
+</head>	
+	<body>
+		<div id="getting_started">
+		<table width="100%">
+			<tr>
+	    		<td align="center">
+	    			<a href="/rol">
+                		<img src="${tg.url('/images/roles.png')}" width="80" height="80" alt="ABM Rol" />
+            		</a>
+            	</td>
+            	<td align="center">
+            		<a href="/usuario">
+                		<img src="${tg.url('/images/usuarios.png')}" width="80" height="80" alt="ABM Permisos" />
+            		</a>
+            	</td>
+            	<td align="center">
+            		<a href="/proyecto">
+                		<img src="${tg.url('/images/proyecto.png')}" width="80" height="80" alt="ABM Permisos" />
+            		</a>
+            	</td>            	
+            	<td align="center">
+            		<a href="#">
+                		<img src="${tg.url('/images/sistema.png')}" width="80" height="80" alt="ABM Permisos" />
+            		</a>
+            	</td>
+            </tr>
+            <tr>
+            	<td align="center"><label> Roles </label></td>
+            	<td align="center"><label> Usuarios </label></td>
+            	<td align="center"><label> Proyectos </label></td>
+            	<td align="center"><label> Sistema </label></td>
+            </tr>
+         </table>            
+	  	</div>
+	  	<div class="clearingdiv" />
+	  	<div class="notice"> El usuario tiene permisos de administracion de sistemas </div>
+	</body>
+</html>

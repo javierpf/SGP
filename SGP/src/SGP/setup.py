@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #quckstarted Options:
 #
-# sqlalchemy: False
-# auth:       None
+# sqlalchemy: True
+# auth:       sqlalchemy
 # mako:       False
 #
 #
@@ -23,7 +23,19 @@ setup(
     #url='',
     install_requires=[
         "TurboGears2 >= 2.1",
-                ],
+        "zope.sqlalchemy >= 0.4",
+        "repoze.tm2 >= 1.0a5",
+        
+        "repoze.what-quickstart",
+        "repoze.what >= 1.0.8",
+        "repoze.what-quickstart",
+        "repoze.who-friendlyform >=1.0.4",
+        "repoze.what-pylons >= 1.0rc3",
+        "repoze.what.plugins.sql",
+        "repoze.who ==1.0.18",
+        "tgext.admin>=0.3.9",
+        "tw.forms",
+        ],
     setup_requires=["PasteScript >= 1.7"],
     paster_plugins=['PasteScript', 'Pylons', 'TurboGears2'],
     packages=find_packages(exclude=['ez_setup']),

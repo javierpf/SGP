@@ -1,3 +1,5 @@
+from repoze.what import predicates
+from sgp.lib.auth import EvaluarPermiso
 from sgp.lib.base import BaseController
 from sgp.model import DBSession
 from sgp.model.auth import Permiso

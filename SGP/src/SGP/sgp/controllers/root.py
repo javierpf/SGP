@@ -1,28 +1,36 @@
 # -*- coding: utf-8 -*-
 """Main Controller"""
-
 from tg import expose, flash, require, url, request, redirect
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
-from sgp.model import DBSession
-from sgp.lib.base import BaseController
+from tgext.admin.tgadminconfig import TGAdminConfig
+from tgext.admin.controller import AdminController
+from repoze.what import predicates
+from sgp.lib.auth import EvaluarPermiso
 
+from sgp.lib.base import BaseController
+from sgp.model import DBSession, metadata
+from sgp import model
+from sgp.model.auth import menu_class
+from sgp.managers.UsuarioMan import UsuarioManager
+from sgp.managers.RolMan import RolManager
+from sgp.controllers.secure import SecureController
 from sgp.controllers.error import ErrorController
-from sgp.model.auth import *
+from sgp.controllers.permiso import PermisoController
 from sgp.controllers.permiso import PermisoController
 from sgp.controllers.usuario import UsuarioController
 from sgp.controllers.proyecto import ProyectoController
 from sgp.controllers.rol import RolController
 from sgp.controllers.tipoItem import TipoItemController
 from sgp.controllers.campo import CampoController
-
-
-from sgp.managers.UsuarioMan import UsuarioManager
-from sgp.managers.ItemMan import ItemManager
-from sgp.managers.RolMan import RolManager
-from sgp.managers.PermisoMan import PermisoManager
-
+from sgp.controllers.item import ItemController
+from sgp.controllers.fase import FaseController
+from sgp.controllers.itemRevertir import ItemRevertirController
+from tg import session
 __all__ = ['RootController']
 
+class ProyectList():
+    id_proyecto = None
+    nombre = None
 
 class RootController(BaseController):
     error = ErrorController()
@@ -31,172 +39,53 @@ class RootController(BaseController):
     proyecto = ProyectoController(DBSession)
     rol = RolController(DBSession)
     tipoItem=TipoItemController(DBSession)
-    campo=CampoController(DBSession)
-###############################################################################################################
-#Relaciones
-    @expose()
-    def getHijos(self):
-        im=ItemManager()
-        hijos = im.getHijos(2)
-        return hijos
+    fase=FaseController(DBSession)
+    item=ItemController(DBSession)
+    itemRevertir = ItemRevertirController(DBSession)
+    m=None
+    def menu (self,id_user):
+        if request.identity:
+            m =(UsuarioManager().getMenu(id_user))
+            session['menu'] = m
+            session.save()
+        return m
 
-###############################################################################################################
-#ADJUNTO
-
-
-###############################################################################################################
-#PERMISO    
-    @expose()
-    def permisoById(self):
-        pm = PermisoManager()
-        p = pm.getById(1)
-        return p.nombre
-    @expose()
-    def permisoByName(self):
-        pm = PermisoManager()
-        p = pm.getByName("permiso para Crear Proyecto")
-        return p.descripcion
-    @expose()
-    def updatePermiso(self):
-        pm = PermisoManager()
-        p = pm.getById(12)
-        p.descripcion = "Modificado1"
-        pm.update(p)
-        return "Verificar"
-    @expose()
-    def deletePermiso(self):
-        pm = PermisoManager()
-        p = pm.getById(14)
-        pm.delete(p)
-        return "Verificar no existe permiso con id=14"
-    @expose()
-    def deletePemisoById(self):
-        pm = PermisoManager() 
-        pm.deleteById(13)
-        return "Verificar no existe permiso con id=13"
-    @expose()
-    def deletePermisoByName(self):
-        pm = PermisoManager()
-        p = pm.getById(12)
-        pm.deleteByName(p.nombre)
-        return "Verif. Crear proyecto no debe existir"
-#############################################################################################################
-# ROL    
-    @expose()
-    def updateRol(self):
-        rm = RolManager()
-        r = rm.getById(2)
-        r.nombre = "Mod"
-        rm.update(r)
-        r = rm.getById(2)
-        return r.nombre
-    @expose()
-    def deleteRol(self):
-        rm = RolManager()
-        r = rm.getByName("AddParams")
-        rm.delete(r)
-        return "No debe existir" + r.nombre
-    @expose()
-    def deleteByid(self):
-        rm = RolManager()
-        rm.deleteByid(3)
-        return "Mirar en PGAdmin! -- No debe existir un rol con id=3"
-    @expose()
-    def deleteByName(self):
-        rm=RolManager()
-        rm.deleteByName("AddParams")
-        return "Mirar en PGAdmin -- No debe existir un rol llamado AddParams"
-    @expose()
-    def addRol(self):
-        rm = RolManager()
-        id_permisos = [1,2,3]
-        rm.addParams("AddParams", "Desde addRol", id_permisos)
-        rr = rm.getByName("AddParams")
-        return rr.nombre     
-        
-    @expose()
-    def rolByName(self):
-        rm = RolManager()
-        r = rm.getByName("rol1")
-        return r.nombre
-    @expose()
-    def rolById(self):
-        rm = RolManager()
-        r = rm.getById(2)
-        return r.nombre
-###############################################################################################################
-#USUARIO
     @expose('sgp.templates.index')
     def index(self):
-        """Handle the front-page"""
+        try:
+            if session['menu'] != []:
+                pass
+        except:
+            session['menu']=[]
+            session.save()
+            session['admin_tipo']="ninguno"; session.save()
         return dict(page='index')
-    @expose()
-    def nuevoUsuario(self):
-        u = Usuario()
-        u.nombre = "Canhete"
-        u.telefono="0981 631 303"
-        u.usuario = "vanecan2"
-        u.password = "12345"
+    @expose('sgp.templates.pagina_principal')
+    def principal(self):
+        session['admin_sistema']=False
         um = UsuarioManager()
-        um.add(u)
-        user = um.getUsuarioByLogin("vanecan2")
-        return user.usuario
-    @expose()
-    def modificarUsuario(self):
-        um = UsuarioManager()
-        u = um.getUsuarioByLogin("vanecan2")
-        u.nombre = "update"
-        um.update(u)
-        u=um.getUsuarioByLogin("vanecan2")
-        return u.nombre
-    @expose()
-    def eByid(self):
-        um = UsuarioManager()
-        um.deleteByid(8)
-    @expose()
-    def eByLogin(self):
-        um = UsuarioManager()
-        um.deleteByLogin("vanecan")
-    @expose()
-    def delete(self):
-        um = UsuarioManager()
-        u = um.getByLogin("javier")
-        um.delete(u)
-        
-        
-        
-    @expose()
-    def prueba(self):
-        query = DBSession.query(Usuario)
-        it = query.filter(Usuario.id_usuario == 1 ).one()
-        res = ""
-        for r in it.roles :
-           for p in r.permisos_recursos:
-               res = res + p.permiso.nombre + "   "+str(p.recurso.id_recurso) + "         "
-        return res
-       # return dict(page='index')
-    
-    @expose()
-    def listaUsuarios(self):
-        um = UsuarioManager()
-        u = um.getAll()
-        res = ""
-        for user in u:
-            res = res + "\n" + str(user.id_usuario) + " " + user.nombre+" " + user.usuario+ " "+ user.password + "\n"
-        return str(res) 
-###############################################################################################################
-#DEFAULT
+        usuario= um.getByLogin(request.identity['repoze.who.userid'])
+        roles = RolManager().getRoles(usuario)
+        proyectos, sistema = um.getProyecto(usuario.id_usuario)
+        l = []
+        for i in proyectos:
+            p = ProyectList()
+            p.nombre = i.nombre
+            p.id_proyecto = i.id_proyecto
+            l.append(p)
+        print l
+        session['admin_tipo']="ambos"; session.save()
+        session['sistema']=True; session.save()
+        return dict(id_usuario = usuario.id_usuario, usuario = usuario.nombre, proyectos = l, roles = roles, hola=True)
+    @expose('sgp.templates.Sistema')
+    def sistema(self):
+        session['admin_sistema']=True; session.save()
+        session['id_proyecto']=-1; session.save()
+        return dict(page="sistema")
     @expose('sgp.templates.about')
     def about(self):
         """Handle the 'about' page."""
-        query = DBSession.query(Usuario)
-        rol = query.filter(Usuario.id_usuario == 2).one()
-        res = ""
-        for r in rol.permisos:
-            res = res + r.nombre + "\n"
-        #return dict(page='index')
-        return res
-        #return dict(page='about')
+        return dict(page='about')
 
     @expose('sgp.templates.environ')
     def environ(self):
@@ -209,4 +98,55 @@ class RootController(BaseController):
         """This method showcases how you can use the same controller for a data page and a display page"""
         return dict(params=kw)
 
+    @expose('sgp.templates.authentication')
+    def auth(self):
+        """Display some information about auth* on this application."""
+        return dict(page='auth')
 
+    @expose('sgp.templates.index')
+    @require(predicates.has_permission('manage', msg=l_('Only for managers')))
+    def manage_permission_only(self, **kw):
+        """Illustrate how a page for managers only works."""
+        return dict(page='managers stuff')
+
+    @expose('sgp.templates.index')
+    #@require(predicates.is_user('editor', msg=l_('Only for the editor')))
+    @require(EvaluarPermiso(1 ,id_fase = 2))
+    def editor_user_only(self, **kw):
+        """Illustrate how a page exclusive for the editor works."""
+        return dict(page='editor stuff')
+
+    @expose('sgp.templates.login')
+    def login(self, came_from=url('/')):
+        """Start the user login."""
+        login_counter = request.environ['repoze.who.logins']
+        if login_counter > 0:
+            flash(_('Wrong credentials'), 'warning')
+        return dict(page='login', login_counter=str(login_counter),
+                    came_from=came_from, menu=None)
+
+    @expose()
+    def post_login(self, came_from='/'):
+        """
+        Redirect the user to the initially requested page on successful
+        authentication or redirect her back to the login page if login failed.
+
+        """
+        if not request.identity:
+            login_counter = request.environ['repoze.who.logins'] + 1
+            redirect('/login', came_from=came_from, __logins=login_counter)
+        userid = request.identity['repoze.who.userid']
+        flash(_('Welcome back, %s!') % userid)
+        self.menu(UsuarioManager().getByLogin(userid).id_usuario)
+        redirect('/principal')
+
+    @expose()
+    def post_logout(self, came_from=url('/')):
+        """
+        Redirect the user to the initially requested page on logout and say
+        goodbye as well.
+
+        """
+        session.delete()
+        flash(_('We hope to see you soon!'))
+        redirect('/index')

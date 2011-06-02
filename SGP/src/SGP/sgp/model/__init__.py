@@ -59,3 +59,4 @@ def init_model(engine):
 
 
 # Import your model modules here.
+from sgp.model.auth import Usuario, Rol, Permiso

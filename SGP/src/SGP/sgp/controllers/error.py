@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Error controller"""
-
+from repoze.what import predicates
+from sgp.lib.auth import EvaluarPermiso
 from tg import request, expose
 
 __all__ = ['ErrorController']

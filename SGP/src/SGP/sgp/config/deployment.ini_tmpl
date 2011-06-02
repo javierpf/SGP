@@ -51,7 +51,7 @@ sqlalchemy.echo = False
 # http://docs.python.org/lib/logging-config-fileformat.html
 
 [loggers]
-keys = root, sgp, sqlalchemy
+keys = root, sgp, sqlalchemy, auth
 
 [handlers]
 keys = console
@@ -77,6 +77,13 @@ qualname = sqlalchemy.engine
 # "level = DEBUG" logs SQL queries and results.
 # "level = WARN" logs neither.  (Recommended for production systems.)
 
+
+# A logger for authentication, identification and authorization -- this is
+# repoze.who and repoze.what:
+[logger_auth]
+level = WARN
+handlers =
+qualname = auth
 
 # If you create additional handlers, add them as a key to [handlers]
 [handler_console]

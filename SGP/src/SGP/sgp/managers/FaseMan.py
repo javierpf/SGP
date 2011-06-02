@@ -1,6 +1,6 @@
 from sgp.lib.base import BaseController
 from sgp.model import metadata, DBSession
-from sgp.model.auth import Item,Usuario, Rol, Permiso, Fase
+from sgp.model.auth import Item,Usuario, Rol, Permiso, Fase, Recurso
 from sgp import model
 import transaction
 
@@ -21,14 +21,11 @@ class FaseManager():
     def add(self, user):
         DBSession.add(user)
         transaction.commit()
-    
-    def _add(self,name,tel,login, passw):
-        u = Fase()
-        u.nombre= name
-        u.telefono=tel
-        u.Fase = login
-        u.password=passw
-        DBSession.add(u)
+        
+        recurso = Recurso()
+        recurso.fase = user
+        recurso.tipo = 2
+        DBSession.add(recurso)
         transaction.commit()
         
     def update(self,user):
@@ -36,10 +33,19 @@ class FaseManager():
         transaction.commit()
         
     def delete(self,user):
+        recurso = DBSession.query(Recurso).filter(user.id_fase == Recurso.id_fase)
+        DBSession.delete(recurso)
+        transaction.commit()
+        
         DBSession.delete(user)
         transaction.commit()
+        
     
     def deleteById(self, id):
+        recurso = DBSession.query(Recurso).filter(id == Recurso.id_fase).one()
+        DBSession.delete(recurso)
+        transaction.commit()
+        
         u = self.getById(id)
         DBSession.delete(u)
         transaction.commit()
@@ -48,8 +54,9 @@ class FaseManager():
         u = self.getByLogin(name)
         DBSession.delete(u)
         transaction.commit()
-    def buscar(self, buscado):
-        lista = DBSession.query(Fase).filter(Fase.nombre.op('~*')(buscado)).all()
+    def buscar(self, buscado, id_proyecto):
+        
+        lista = DBSession.query(Fase).filter(Fase.nombre.op('~*')(buscado) & (Fase.id_proyecto ==id_proyecto )).all()
         return lista
     def getListaFases(self, lista_id):
         listaFases = []
@@ -57,4 +64,7 @@ class FaseManager():
             p = self.getById(i)
             listaFases.append(p)
         return listaFases
-        
+    
+    def buscar_por_proyecto(self, buscado):
+        lista = DBSession.query(Fase).filter(Fase.id_proyecto == buscado).all()
+        return lista

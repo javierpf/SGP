@@ -1,9 +1,9 @@
 from sgp.lib.base import BaseController
 from sgp.model import metadata, DBSession
-from sgp.model.auth import Item,Usuario, Rol, Permiso
+from sgp.model.auth import Item,Usuario, Rol, Permiso, Recurso, rec
 from sgp import model
+from sgp.managers.ProyectoMan import ProyectoManager
 import transaction
-
 class PermisoManager():
     def getAll(self):
         all = DBSession.query(Permiso).all()
@@ -17,7 +17,7 @@ class PermisoManager():
     def getListaPermisos(self, lista_id):
         listaPermisos = []
         for i in lista_id:
-            p = self.getById(i)
+            p = self.getById(int(i))
             listaPermisos.append(p)
         return listaPermisos
     def add(self, permiso):
@@ -67,4 +67,25 @@ class PermisoManager():
     def buscar(self, buscado):
         lista = DBSession.query(Permiso).filter(Permiso.nombre.op('~*')(buscado)).all()
         return lista
+    def getProyecto(self, id_proyecto):
+        p = ProyectoManager().getById(int(id_proyecto))
+        r = rec()
+        r.nombre = p.nombre
+        r.id = self.getIdRecursoProyecto(p.id_proyecto)
+        return [r]
+    def getFases(self, id_proyecto):
+        p = ProyectoManager().getById(int(id_proyecto))
+        l = []
+        for i in p.fases:
+            r = rec()
+            r.nombre = i.nombre
+            r.id = self.getIdRecursoFase(i.id_fase)
+            l.append(r)
+        return l
+    def getIdRecursoProyecto(self,idp):
+        id = DBSession.query(Recurso).filter(Recurso.id_proyecto == idp).one().id_recurso
+        return id
+    def getIdRecursoFase(self, idf):
+        id = DBSession.query(Recurso).filter(Recurso.id_fase == idf).one().id_recurso
+        return id
         

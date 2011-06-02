@@ -1,0 +1,27 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      py:strip="">
+<py:def function="f_menu">
+
+
+<div id="menu01" >
+<ul id="mainmenu">
+<li class="first"><a href="${tg.url('/index')}">Inicio</a></li>
+<li><a href="#">Proyectos</a>
+<ul>
+	<li py:for= "p in session['menu']" >
+		<a href="/fase/fases_por_proyecto?id_proyecto=$p.id"> $p.nombre </a>
+		<ul>
+			<li py:for= "f in p.fases"> <a href="/item/items?id=fase=$f.id"> $f.nombre </a> </li>
+		</ul>
+	</li>
+</ul>
+</li>
+
+<li py:if="not request.identity" id="login" class="loginlogout"><a href="${tg.url('/login')}">Iniciar Sesión</a></li>
+<li py:if="request.identity" id="login" class="loginlogout"><a href="${tg.url('/logout_handler')}">Cerrar Sesión</a></li>
+
+</ul>
+</div>  
+</py:def>
+</html>

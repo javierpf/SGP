@@ -1,0 +1,32 @@
+(dp1
+S'session'
+p2
+(dp3
+S'id_proyecto'
+p4
+V1
+sS'menu'
+p5
+(lp6
+(isgp.model.auth
+menu_class
+p7
+(dp8
+S'nombre'
+p9
+VProyecto 1
+p10
+sS'id'
+p11
+I1
+sbasS'_accessed_time'
+p12
+F1305837956.9991479
+sS'_creation_time'
+p13
+F1305837819.3378689
+sS'proyecto'
+p14
+VProyecto 1
+p15
+ss.

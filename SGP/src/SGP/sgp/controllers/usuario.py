@@ -1,3 +1,5 @@
+from repoze.what import predicates
+from sgp.lib.auth import EvaluarPermiso
 from sgp.lib.base import BaseController
 from sgp.model import DBSession
 from sgp.model.auth import Usuario
@@ -25,11 +27,27 @@ usuario_table = UsuarioTable(DBSession)
 
 class UsuarioTableFiller(TableFiller):
     __model__ = Usuario
+    def __actions__(self, obj):
+        """Override this function to define how action links should be displayed for the given record."""
+        primary_fields = self.__provider__.get_primary_fields(self.__entity__)
+        pklist = '/'.join(map(lambda x: str(getattr(obj, x)), primary_fields))
+        value = '<div><div><a class="edit_link" href="/usuario/'+pklist+'/edit" style="text-decoration:none">edit</a>'\
+              '</div><div>'\
+              '<form method="POST" action="/usuario/'+pklist+'/post_delete" class="button-to">'\
+            '<input type="hidden" name="_method" value="DELETE" />'\
+            '<input class="delete-button" onclick="return confirm(\'Are you sure?\');" value="delete" type="submit" '\
+            'style="background-color: transparent; float:left; border:0; color: #286571; display: inline; margin: 0; padding: 0;"/>'\
+        '</form>'\
+        '</div></div>'
+        return value    
 usuario_table_filler = UsuarioTableFiller(DBSession)
 
 class UsuarioAddForm(AddRecordForm):
     __model__ = Usuario
     __omit_fields__ = ['id_usuario','roles']
+    __limit_fields__= ['nombre', 'usuario', 'telefono', '_password']
+    __order_fields__= ['nombre', 'usuario', 'telefono', '_password']
+
 usuario_add_form = UsuarioAddForm(DBSession)
 
 class UsuarioEditForm(EditableForm):
@@ -62,10 +80,10 @@ class UsuarioController(CrudRestController):
     new_form = usuario_add_form
     edit_form = usuario_edit_form
     edit_filler = usuario_edit_filler
-    @with_trailing_slash
+    @without_trailing_slash
     @expose('sgp.templates.get_all_usuario')
     @expose('json')
-    @paginate('value_list', items_per_page=7)
+    @paginate('value_list', items_per_page=10)
     def get_all(self, *args, **kw):
         """Return all records.
            Pagination is done by offset/limit in the filler method.
@@ -78,17 +96,25 @@ class UsuarioController(CrudRestController):
             values = self.table_filler.get_value(**kw)
         else:
             values = []
-
+        
         tmpl_context.widget = self.table
         return dict(model=self.model.__name__, value_list=values)    
-    
+#---------------------------------------------------------------------------------------------    
+    @without_trailing_slash
+    @expose('tgext.crud.templates.new')
+    def new(self, *args, **kw):
+        print"En el new"
+        """Display a page to show a new record."""
+        tmpl_context.widget = self.new_form
+        return dict(value=kw, model=self.model.__name__)
+#---------------------------------------------------------------------------------------------    
     @expose()
     def post(self, **kw):
         #New
         p = Usuario()
         pm = UsuarioManager()
         params = kw
-        password = params['password']
+        password = params['_password']
         nombre = params['nombre']
         telefono = params['telefono']
         usuario = params['usuario']
@@ -97,7 +123,7 @@ class UsuarioController(CrudRestController):
         p.password = password
         p.usuario = usuario
         pm.add(p)
-        raise redirect('./')
+        raise redirect('/usuario')
     
     @expose()
     def put(self, *args, **kw):
@@ -105,7 +131,7 @@ class UsuarioController(CrudRestController):
         pm=UsuarioManager()
         p = pm.getById(args)
         params = kw
-        password = params['password']
+        password = params['_password']
         nombre = params['nombre']
         telefono = params['telefono']
         usuario = params['usuario']
@@ -116,15 +142,15 @@ class UsuarioController(CrudRestController):
         p.usuario = usuario
         pm.update(p)
        
-        raise redirect('../')    
+        raise redirect('/usuario')    
 
     
     @expose()
     def post_delete(self, *args, **kw):
         '''delete'''
         pm = UsuarioManager()
-        pm.deleteById(args)
-        raise redirect('./')
+        pm.deleteById(int(args[0]))
+        raise redirect('/usuario')
 # ************************************************************************************************************
     @with_trailing_slash
     @expose('sgp.templates.get_all_usuario')
