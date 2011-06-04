@@ -1,6 +1,6 @@
 from sgp.lib.base import BaseController
 from sgp.model import metadata, DBSession
-from sgp.model.auth import Item,Usuario, Rol, Permiso, Fase, Recurso
+from sgp.model.auth import Item,Usuario, Rol, Permiso, Fase, Recurso, Proyecto
 from sgp import model
 import transaction
 
@@ -68,3 +68,18 @@ class FaseManager():
     def buscar_por_proyecto(self, buscado):
         lista = DBSession.query(Fase).filter(Fase.id_proyecto == buscado).all()
         return lista
+    def generarCodigo(self, id_proyecto):
+        transaction.begin()
+        idp=int(id_proyecto)
+        p = DBSession.query(Proyecto).filter(Proyecto.id_proyecto==idp).one()
+        nro = p.nro_fase+1
+        p.nro_fase = nro
+        DBSession.merge(p)
+        transaction.commit()
+        return nro
+    def ordenarFase(self, orden, fase):
+        transaction.begin()
+        f = self.getById(fase)
+        f.orden = orden
+        DBSession.merge(f)
+        transaction.commit()

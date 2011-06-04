@@ -19,7 +19,7 @@ from tg import session
 ##############################################################################
 class ProyectoTable(TableBase):
     __model__ = Proyecto
-    __omit_fields__ = ['descripcion','id_proyecto','id_administrador','fecha_inicio','fecha_finalizacion','costo_estimado', 'administrador']
+    __omit_fields__ = ['descripcion','id_proyecto','id_administrador','fecha_inicio','fecha_finalizacion','costo_estimado', 'administrador', 'nro_fase']
     __dropdown_field_names__ = {'administrador':'nombre'}
     __field_order__        = ['nombre','estado','fases']
     __xml_fields__ = ['nombre']
@@ -59,7 +59,7 @@ proyecto_table_filler = ProyectoTableFiller(DBSession)
 ##############################################################################
 class ProyectoAddForm(AddRecordForm):
     __model__ = Proyecto
-    __omit_fields__ = ['id_Proyecto','estado','fecha_inicio','fecha_finalizacion','costo_estimado','fases', 'id_administrador']
+    __omit_fields__ = ['id_Proyecto','estado','fecha_inicio','fecha_finalizacion','costo_estimado','fases', 'id_administrador','nro_fase']
     __dropdown_field_names__ = {'administrador':'nombre'}
     __field_order__ = ['nombre', 'descripcion', 'administrador']
     #__limit_fields__ = ['id_Proyecto','administrador','nombre','descripcion']
@@ -67,7 +67,7 @@ proyecto_add_form = ProyectoAddForm(DBSession)
 ##############################################################################
 class ProyectoEditForm(EditableForm):
     __model__ = Proyecto
-    __omit_fields__ = ['id_administrador','estado','fases']
+    __omit_fields__ = ['id_administrador','estado','fases','nro_fase']
 proyecto_edit_form = ProyectoEditForm(DBSession)
 ##############################################################################
 class ProyectoEditFiller(EditFormFiller):
@@ -134,6 +134,8 @@ class ProyectoController(CrudRestController):
         p.nombre = params['nombre']
         p.estado = 'creado'
         p.id_administrador = params['administrador']
+        p.prefijo = params['prefijo']
+        p.nro_fase = 0
         pm.add(p)
         raise redirect('./')
 #******************************************************************************************    
@@ -148,10 +150,10 @@ class ProyectoController(CrudRestController):
         p.fecha_inicio = params['fecha_inicio']
         p.fecha_finalizacion = params['fecha_finalizacion']
         p.costo_estimado = params['costo_estimado']
-        p.estado = 'iniciado'
+        #p.estado = 'iniciado'
         pm.update(p)
         
-        session['id_proyecto'] = args
+        session['id_proyecto'] = args[0]
         session.save()
         
         raise redirect('/fase/')

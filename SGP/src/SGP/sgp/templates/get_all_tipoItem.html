@@ -33,12 +33,17 @@
 		</div>		
 		<div>
 			${menu_tipo_item()}
-		</div>	
+		</div>
+      			
 		<div style="float:left; padding-left:0px;">
 			<ul id="menu_items" py:if="hasattr(tmpl_context, 'menu_items')">
 				<li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s">$item.__name__</a></li>
 			</ul>
 		</div>
+		<div>
+        	<span py:if="value_list" style="margin-left:2em" py:content="tmpl_context.paginators.value_list.pager(link='../%ss/'%model.lower())"/>
+      	</div>
+		
 		<div style="float:left; width:80%">
 			<div class="crud_table" style="height:50%; width:90%">
    				${XML(tmpl_context.widget(value=value_list, action='../'+model.lower()+'s.json'))}

@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<title>${tmpl_context.title} - New ${model}</title>
+<head>
+<style>
+#menu_items {
+  padding:0px 12px 0px 2px;
+  list-style-type:None
+  }
+</style>
+</head>
+<body class="tundra">
+  <div style="height:0px;"> &nbsp; </div>
+
+  <div style="float:left; padding-left:0px;">
+        <ul id="menu_items" py:if="hasattr(tmpl_context, 'menu_items')">
+            <li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s/">$item.__name__</a></li>
+       </ul>
+  </div>
+  <div style="float:left;" class="crud_add">
+    <h2 style="margin-top:1px;">New $model</h2>
+    <form action="/proyecto/new" method="post">
+    	<table>
+    		<tr>
+    			<td>
+    				<label> Nombre: </label>
+    			</td>
+    			<td>
+    				<input type="text" name="nombre" value="" />
+    			</td>
+    		</tr>
+    		<tr>
+    			<td>
+    				<label> Descripcion
+    				</label>
+    			</td>
+    			<td>
+    				<TEXTAREA COLS="40" ROWS="10" NAME="descripcion"></TEXTAREA>
+    			</td>
+    		</tr>
+    		<tr>
+    			<td>
+    				<label> Administrador: </label>
+    			</td>
+    			<td>
+    				<spa
+    			</td>
+    		</tr>
+    		<tr>
+    			<td>
+    				<label> Prefijo: </label>
+    			</td>
+    			<td>
+    				<input type="text" name="prefijo" value="" />
+    			</td>
+    		</tr>    		
+    	</table>
+    </form>
+  </div>
+  <div style="height:0px; clear:both;"> &nbsp; </div>
+</body>
+</html>

@@ -11,36 +11,18 @@
 								<img src="${tg.url('/images/buscar.png')}" width="28" height="28" alt="ABM Usuarios" />            		
 							</button>
 						</form>
-					</td>					
-					<td style="padding:0px 70px 0px 10px;">
-						<form action="/tipoItem/post" method = "post">
- 							<div class="crud_table"> 
-								<table class="grid" border = "1" width="10%">
-  								<thead><th>Nuevo Tipo de Item</th><th></th><th></th></thead> 
-           							<tbody>
-           								<tr>
-           									<td>Nuevo tipo de item:</td>
-           									<td> 
-           										<input type="text" name="nombre" onclick="this.value=''" value="Introducir el nombre..." />
-    	       								</td>
-        	   								<td>
-												<button type="submit" name="tipo" value="" title="Aceptar">
-													<img src="${tg.url('/images/agregar.png')}" alt="Aceptar" width="28" height="28" />
-													<br /> Crear
-												</button>
-           									</td></tr> 
-										</tbody>
-								</table>
-							 </div>
-						</form>
 					</td>
+					<td>
+						<a href="/tipoItem/new">
+							<img src="${tg.url('/images/agregar.png')}" width="48" height="48" title="Nuevo Tipo de Item" />
+							<br /> Nuevo            		
+						</a>
+					</td>			
 					<td style="padding:0px 70px 0px 10px;">					
-						<form action= "/tipoItem/importar" method="post" >
-							<button type="submit" value="Importar">
+							<a href="/tipoItem/importar" value="Importar">
 								<img src="${tg.url('/images/importar.png')}" width="48" height="48" alt="ABM Usuarios" />
 								<br /> Importar
-							</button>
-						</form>
+							</a>
 					</td>								
 				</tr>
 			</table>

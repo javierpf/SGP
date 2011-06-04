@@ -29,6 +29,8 @@ import os
 class ItemTable(TableBase):
     __model__ = Item
     __omit_fields__ = ['id_item','observacion','complejidad','id_fase','id_linea_base','id_tipo_item','descripcion','adjuntos','atributos',]
+    __limit_fields__= ['codigo', 'identificador', 'version', 'estado', 'linea_base']
+    __order_fields__ = ['codigo', 'identificador', 'version', 'estado', 'linea_base']
    
 item_table = ItemTable(DBSession)
 ##############################################################################
@@ -178,10 +180,9 @@ class ItemController(CrudRestController):
         p.complejidad = params['complejidad']
         p.descripcion = params['descripcion']
         p.id_fase = int(session['id_fase'])
-        p.codigo = cm.generar_codigo()
+        p.codigo = pm.generar_codigo(int(session['id_fase']), int(params['tipo_items']))
         p.version = 1
         p.actual = 'true'
-        
         
         if params['tipo_items'] != '-1':
             ti = TipoItemManager()
