@@ -64,21 +64,50 @@ fase_edit_filler = FaseEditFiller(DBSession)
 ##############################################################################
 class FasesProyectoTable(TableBase):
     __model__ = Fase
-    __omit_fields__ = ['id_fase','id_proyecto','items','proyecto','__actions__']
+    __limit_fields__=['nombre', 'descripcion']
     __xml_fields__ = ['nombre']
 fase_proyecto_table = FasesProyectoTable(DBSession)
+class FasesProyectoTableNotActions(TableBase):
+    __model__ = Fase
+    __limit_fields__=['nombre', 'descripcion']
+    __omit_fields__=['__actions__']
+    __xml_fields__ = ['nombre']
+fase_proyecto_table_not_actions = FasesProyectoTableNotActions(DBSession)
 # ################################################################################################       
 class FasePorProyectoTableFiller(TableFiller):
     __model__ = Fase
     buscado=""
+    estado = ""
     def init(self,buscado):
         self.buscado=buscado
+    def initEstado(self, estado):
+        self.estado=estado
         
     def nombre(self, obj):
         nombre = ('<div>'+'<a href="/item/?id_fase='+str(obj.id_fase)+'">'+obj.nombre+'</a>'+'</div>')
 #        nombre = ('<div>'+'<a href="/item/get_all?id_proyecto='+str(obj.id_proyecto)+'&id_fase='+str(obj.id_fase)+'">'+obj.nombre+'</a>'+'</div>')
         return nombre
-
+    def __actions__(self, obj):
+        """Override this function to define how action links should be displayed for the given record."""
+        primary_fields = self.__provider__.get_primary_fields(self.__entity__)
+        pklist = '/'.join(map(lambda x: str(getattr(obj, x)), primary_fields))
+        if self.estado == "creado":
+            value = '<div><div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a>'\
+                  '</div><div>'\
+                  '<form method="POST" action="'+pklist+'" class="button-to">'\
+                '<input type="hidden" name="_method" value="DELETE" />'\
+                '<input class="delete-button" onclick="return confirm(\'Are you sure?\');" value="delete" type="submit" '\
+                'style="background-color: transparent; float:left; border:0; color: #286571; display: inline; margin: 0; padding: 0;"/>'\
+            '</form>'\
+            '</div></div>'
+            return value
+        else:
+            value = '<div><div>'\
+                  '</div><div>'\
+                  '<form>'\
+            '</form>'\
+            '</div></div>'
+            return value
     def _do_get_provider_count_and_objs(self, buscado="", **kw):
         pm = FaseManager()
         Fasees = pm.buscar_por_proyecto(self.buscado)
@@ -117,9 +146,32 @@ class FasesProyectoTableFiller(TableFiller):
     __model__ = Fase
 
     buscado=""
+    estado=""
     def init(self,id_proyecto):
         self.id_proyecto= id_proyecto
-    
+    def initEstado(self, estado):
+        self.estado=estado
+    def __actions__(self, obj):
+        """Override this function to define how action links should be displayed for the given record."""
+        primary_fields = self.__provider__.get_primary_fields(self.__entity__)
+        pklist = '/'.join(map(lambda x: str(getattr(obj, x)), primary_fields))
+        if self.estado == "creado":
+            value = '<div><div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a>'\
+                  '</div><div>'\
+                  '<form method="POST" action="'+pklist+'" class="button-to">'\
+                '<input type="hidden" name="_method" value="DELETE" />'\
+                '<input class="delete-button" onclick="return confirm(\'Are you sure?\');" value="delete" type="submit" '\
+                'style="background-color: transparent; float:left; border:0; color: #286571; display: inline; margin: 0; padding: 0;"/>'\
+            '</form>'\
+            '</div></div>'
+            return value
+        else:
+            value = '<div><div>'\
+                  '</div><div>'\
+                  '<form>'\
+            '</form>'\
+            '</div></div>'
+            return value    
     def nombre(self, obj):
         nombre = ('<div>'+'<a href="/item/items?id_fase='+str(obj.id_fase)+'">'+obj.nombre+'</a>'+'</div>')
 #        nombre = ('<div>'+'<a href="/item/get_all?id_fase='+str(obj.id_fase)+'">'+obj.nombre+'</a>'+'</div>')
@@ -141,6 +193,7 @@ class FaseController(CrudRestController):
     edit_form = fase_edit_form
     edit_filler = fase_edit_filler
     table_fases = fase_proyecto_table
+    table_fases_action_null=fase_proyecto_table_not_actions
     
     fase=0
 # ################################################################################################
@@ -160,6 +213,7 @@ class FaseController(CrudRestController):
         tmpl_context.widget = self.table
         value = busqueda_filler.get_value()
         return dict(value_list=value, model="Fase", id_proyecto =id_proyecto)
+
 # ################################################################################################            
     @with_trailing_slash
     @expose('sgp.templates.get_all_fase')
@@ -172,8 +226,8 @@ class FaseController(CrudRestController):
         
         tmpl_context.widget = self.table
         value = busqueda_filler.get_value()
-        
-        return dict(value_list=value, model="Fase")
+        cantidad = FaseManager().cantidad(int(session['id_proyecto']))
+        return dict(value_list=value, model="Fase", cant_fases = cantidad)
 
 # ################################################################################################   
     @with_trailing_slash
@@ -185,7 +239,7 @@ class FaseController(CrudRestController):
         busqueda_filler = BusquedaProyectoTableFiller(DBSession)
         print params['id_proyecto']
         busqueda_filler.init(params['parametro'],params['id_proyecto'])
-        
+        self.table_fases(ProyectoManager().getById(int(params['id_proyecto'])).estado)
         tmpl_context.widget = self.table_fases
         value = busqueda_filler.get_value()
         
@@ -195,7 +249,6 @@ class FaseController(CrudRestController):
     def post(self, **kw):
         '''Nuevo'''
         rm = FaseManager()
-        cm = CodigoManager()
         params = kw
         '''crear la nueva fase'''
         fase = Fase()
@@ -211,7 +264,7 @@ class FaseController(CrudRestController):
         
         fase.codigo = codigo
         rm.add(fase)
-        raise redirect('./')
+        raise redirect('/fase/fases_por_proyecto?id_proyecto='+session['id_proyecto'])
 
 # ################################################################################################       
     @expose()
@@ -237,25 +290,43 @@ class FaseController(CrudRestController):
     @expose('json')
     @paginate('value_list', items_per_page=7)
     def fases_por_proyecto(self, *args, **kw):
+        print "Fases por proyecto"
         params = kw
         fase_filler = FasesProyectoTableFiller(DBSession)
         id_proyecto = params['id_proyecto']
-        session['id_proyecto']=id_proyecto;
-        session.save()
-        
-        session['proyecto']=ProyectoManager().getById(int(id_proyecto)).nombre
-        session.save()
-        session['conn_tipo'] = 0; session.save()
         proyecto = ProyectoManager().getById(int(id_proyecto))
-        if proyecto.estado=="creado":
-            raise redirect ('/proyecto/'+params['id_proyecto']+'/edit')
-        fase_filler.init(id_proyecto)
+        session['id_proyecto']=id_proyecto; session.save()
+        session['proyecto']=proyecto.nombre; session.save()
+        session['conn_tipo'] = 0; session.save()
         
-        tmpl_context.widget = self.table_fases
+        if proyecto.estado !="creado":
+            session['estado']="iniciado"
+        else:
+            session['estado']="creado"
+        session.save()                
+        if proyecto.estado=="creado":
+            if proyecto.fases == []:
+                try:
+                    if not(params['sist']):
+                        raise redirect ('/proyecto/'+params['id_proyecto']+'/edit')
+                except:
+                    raise redirect ('/proyecto/'+params['id_proyecto']+'/edit')                    
+        cantidad=False
+        if len(proyecto.fases)>1:
+            cantidad = True
+        fase_filler.initEstado(proyecto.estado)
+        fase_filler.init(id_proyecto)
+        #self.table_fases.init(proyecto.estado)
+        if proyecto.estado=="iniciado":
+            tmpl_context.widget = self.table_fases_action_null
+        else:
+            tmpl_context.widget = self.table_fases
+            
         value = fase_filler.get_value()
-        return dict(value_list=value, model="Fase")
+        
+        return dict(value_list=value, model="Fase", cant_fases=cantidad)
     @expose()
-    def terminar(self):
+    def terminar(self, **kw):
         print"terminar"
         print ("id_proyecto:" + session['id_proyecto'])
         pm=ProyectoManager()
@@ -263,7 +334,6 @@ class FaseController(CrudRestController):
         p.estado = 'iniciado'
         pm.update(p)
         raise redirect('/fase/fases_por_proyecto?id_proyecto='+session['id_proyecto'])
-    
     @expose("sgp.templates.ordenar_fases")
     def ordenar(self):
         proyecto = ProyectoManager().getById(int(session['id_proyecto']))
@@ -282,7 +352,11 @@ class FaseController(CrudRestController):
     @expose()
     def s_ordenar(self,*args, **kw):
         params  = kw
-        for i in params['posicion']:
-            orden, fase = i.split('#')
-            FaseManager().ordenarFase(int(orden), int(fase))
-        self.terminar()
+        print params
+        if params['submit']=="terminar":
+            for i in params['posicion']:
+                orden, fase = i.split('#')
+                FaseManager().ordenarFase(int(orden), int(fase))
+            self.terminar()
+        else:
+            raise redirect('/fase/fases_por_proyecto?id_proyecto='+session['id_proyecto'])

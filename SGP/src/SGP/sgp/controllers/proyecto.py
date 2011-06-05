@@ -2,16 +2,16 @@ from sgp.lib.base import BaseController
 from sgp.model import DBSession
 from sgp.model.auth import Proyecto
 from sgp.managers.ProyectoMan import ProyectoManager
-from tg import expose, flash, redirect
+from sgp.managers.UsuarioMan import UsuarioManager
+from tg import expose, flash, redirect, url
 from tg.decorators import without_trailing_slash, with_trailing_slash
-
 from tgext.crud import CrudRestController
 from sprox.tablebase import TableBase
 from sprox.fillerbase import TableFiller
 from sprox.formbase import AddRecordForm
 from sprox.formbase import EditableForm
 from sprox.fillerbase import EditFormFiller
-
+import tg
 from tg.decorators import paginate
 import pylons
 from pylons import tmpl_context 
@@ -39,7 +39,7 @@ class ProyectoTableFiller(TableFiller):
         pklist = '/'.join(map(lambda x: str(getattr(obj, x)), primary_fields))
         estado = obj.estado
         if estado == "creado":
-            value = '<div><div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a>'\
+            value = '<div><div><a class="edit_link" href="/proyecto/'+pklist+'/edit" style="text-decoration:none">edit</a>'\
                   '</div><div>'\
                   '<form method="POST" action="'+pklist+'" class="button-to">'\
                 '<input type="hidden" name="_method" value="DELETE" />'\
@@ -64,10 +64,12 @@ class ProyectoAddForm(AddRecordForm):
     __field_order__ = ['nombre', 'descripcion', 'administrador']
     #__limit_fields__ = ['id_Proyecto','administrador','nombre','descripcion']
 proyecto_add_form = ProyectoAddForm(DBSession)
+
 ##############################################################################
 class ProyectoEditForm(EditableForm):
     __model__ = Proyecto
-    __omit_fields__ = ['id_administrador','estado','fases','nro_fase']
+    __omit_fields__ = ['id_administrador','estado','fases','nro_fase', 'nombre', 'descripcion', 'prefijo']
+        #, 'nombre', 'descripcion', 'prefijo'
 proyecto_edit_form = ProyectoEditForm(DBSession)
 ##############################################################################
 class ProyectoEditFiller(EditFormFiller):
@@ -122,7 +124,14 @@ class ProyectoController(CrudRestController):
     edit_form = proyecto_edit_form
     edit_filler = proyecto_edit_filler
     
-#******************************************************************************************    
+#******************************************************************************************
+    @without_trailing_slash
+    @expose('sgp.templates.new_proyecto')
+    def new(self, *args, **kw):
+        """Display a page to show a new record."""
+        usuarios=UsuarioManager().getAll()
+        return dict(usuarios = usuarios)
+    
     @expose()
     def post(self, **kw):
         '''New'''
@@ -136,27 +145,42 @@ class ProyectoController(CrudRestController):
         p.id_administrador = params['administrador']
         p.prefijo = params['prefijo']
         p.nro_fase = 0
-        pm.add(p)
-        raise redirect('./')
+        id = pm.add(p)
+        p = pm.getByNombre(params['nombre'])
+        raise redirect('/proyecto/'+str(p.id_proyecto)+'/edit')
 #******************************************************************************************    
+    @expose('sgp.templates.editProyecto')
+    def edit(self, *args, **kw):
+        """Display a page to edit the record."""
+        print "EDit"
+        tmpl_context.widget = self.edit_form
+        pks = self.provider.get_primary_fields(self.model)
+        kw = {}
+        for i, pk in  enumerate(pks):
+            kw[pk] = args[i]
+        value = self.edit_filler.get_value(kw)
+        value['_method'] = 'PUT'
+        return dict(value=value, model=self.model.__name__, pk_count=len(pks))
     @expose()
     def put(self, *args, **kw):
         '''update'''
         pm=ProyectoManager()
         p = pm.getById(args)
         params = kw
-        p.nombre= params['nombre']
-        p.descripcion = params ['descripcion']
+        try:
+            p.nombre= params['nombre']
+            p.descripcion = params ['descripcion']
+        except:
+            pass
         p.fecha_inicio = params['fecha_inicio']
         p.fecha_finalizacion = params['fecha_finalizacion']
         p.costo_estimado = params['costo_estimado']
         #p.estado = 'iniciado'
         pm.update(p)
-        
+        print "Proyecto actualizado"
         session['id_proyecto'] = args[0]
         session.save()
-        
-        raise redirect('/fase/')
+        raise tg.redirect('/fase/fases_por_proyecto', id_proyecto=args[0], sist = True)
    
 #****************************************************************************************** 
     @expose()
@@ -170,7 +194,7 @@ class ProyectoController(CrudRestController):
         else:
             raise redirect('/proyecto')
         
- #******************************************************************************************       
+#******************************************************************************************       
     @with_trailing_slash
     @expose('sgp.templates.get_all_proyecto')
     @expose('json')
@@ -183,7 +207,7 @@ class ProyectoController(CrudRestController):
         tmpl_context.widget = self.table
         value = busqueda_filler.get_value()
         return dict(value_list=value, model="Proyecto")
-    
+#******************************************************************************************    
     @with_trailing_slash
     @expose('sgp.templates.get_all_proyecto')
     @expose('json')
@@ -202,20 +226,5 @@ class ProyectoController(CrudRestController):
         else:
             values = []
         tmpl_context.widget = self.table
-        return dict(model=self.model.__name__, value_list=values)
-    
-    
-    @expose('tgext.crud.templates.edit')
-    def edit(self, *args, **kw):
-        """Display a page to edit the record."""
-        
-        tmpl_context.widget = self.edit_form
-        pks = self.provider.get_primary_fields(self.model)
-        kw = {}
-        for i, pk in  enumerate(pks):
-            kw[pk] = args[i]
-        value = self.edit_filler.get_value(kw)
-        value['_method'] = 'PUT'
-        return dict(value=value, model=self.model.__name__, pk_count=len(pks))
-        
+        return dict(model=self.model.__name__, value_list=values)        
         

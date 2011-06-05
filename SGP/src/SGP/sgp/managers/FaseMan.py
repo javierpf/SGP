@@ -2,6 +2,7 @@ from sgp.lib.base import BaseController
 from sgp.model import metadata, DBSession
 from sgp.model.auth import Item,Usuario, Rol, Permiso, Fase, Recurso, Proyecto
 from sgp import model
+from sgp.managers.ProyectoMan import ProyectoManager
 import transaction
 
 class FaseManager():
@@ -54,10 +55,14 @@ class FaseManager():
         u = self.getByLogin(name)
         DBSession.delete(u)
         transaction.commit()
-    def buscar(self, buscado, id_proyecto):
-        
+    def buscar(self, buscado, id_proyecto):        
         lista = DBSession.query(Fase).filter(Fase.nombre.op('~*')(buscado) & (Fase.id_proyecto ==id_proyecto )).all()
         return lista
+    def cantidad(self, id_proyecto):
+        if len(ProyectoManager().getById(id_proyecto).fases)>2:
+            return True;
+        else:
+            return False;
     def getListaFases(self, lista_id):
         listaFases = []
         for i in lista_id:

@@ -11,8 +11,8 @@ class ProyectoManager():
         user = DBSession.query(Proyecto).all()
         return user
     
-    def getByLogin(self, loginName):
-        user = DBSession.query(Proyecto).filter(Proyecto.proyecto.like(loginName)).one();
+    def getByNombre(self, nombre):
+        user = DBSession.query(Proyecto).filter(Proyecto.nombre.like(nombre)).one();
         return user
     
     def getById(self, idUser):
@@ -26,8 +26,9 @@ class ProyectoManager():
         recurso = Recurso()
         recurso.proyecto = user
         recurso.tipo = 1
-        DBSession.add(recurso)
+        id = DBSession.add(recurso)
         transaction.commit()
+        return id
         
     def update(self,user):
         DBSession.merge(user)

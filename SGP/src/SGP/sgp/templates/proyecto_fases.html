@@ -41,6 +41,17 @@
 			      	${menu_proyecto()}
 			      </div>
 			</td>
+			</tr><tr>
+			<td>
+			<div py:choose="">
+	      	<div py:when="session['estado']!='iniciado'"> 			
+				<div style="margin:1ex 0; width:90%">
+		        	<a href='new/' class="add_link">Nueva Fase</a>
+		        	<span py:if="value_list" style="margin-left:2em" py:content="tmpl_context.paginators.value_list.pager(link='../%ss/'%model.lower())"/>
+		      	</div>		
+		      </div>
+		      </div>		
+			</td>
 			</tr>
 			</table>
       <div class="crud_table" style="height:50%; width:90%">
@@ -48,6 +59,18 @@
       <div>
         <a href="/fase/fases_por_proyecto?id_proyecto=${session['id_proyecto']}" class="add_link"> Todos </a>
       </div>
+      <div py:if="cant_fases">
+	      <div py:choose="">
+	      	<div py:when="session['estado']!='iniciado'"> 
+	      		<form action= "/fase/ordenar">
+					<button type="submit" value="Buscar">
+						<img src="${tg.url('/images/ok.png')}" width="28" height="28" alt="ABM Usuarios" />
+						<br /> Ordenar Fases 
+					</button>
+				</form>
+			</div>
+			</div>
+		</div>
       </div>
 
     </div>    
