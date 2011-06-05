@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<title>${tmpl_context.title} - New Relacion</title>
+<head>
+<style>
+#menu_items {
+  padding:0px 12px 0px 2px;
+  list-style-type:None
+  }
+</style>
+</head>
+<body class="tundra">
+  <div style="height:0px;"> &nbsp; </div>
+	  <form action="/relacion/new" method="POST" name="assignForm">
+	  	<table><tr><td>
+	  	<div class="crud_table" style="height:50%; width:90%"> 
+        	<div> 
+				<table class="grid" border = "1">
+        			<thead>
+						<th>Items Fase Actual</th>
+						<th>Relacionar Con:</th>
+            		</thead>
+            		<tbody>
+            			<tr class="even" py:for="p in items1">
+			                <td>${p.identificador}</td>
+			                <div py:choose="">
+			                	<td width = "50%">
+			                		<table>
+								<div py:choose="">
+								  <span py:for= "pr in items2">
+								  		<tr><td width="100%">
+								  			<input type="checkbox" name="s_recursos" value="${p.id_item}#${pr.id_item}" /> ${pr.identificador}
+								  		</td></tr>
+								  </span>
+								</div>
+							</table>
+				                </td>
+				            </div>				             
+			            </tr>
+			            
+        			</tbody>
+	        	</table>
+        	</div>
+        	</div>
+        	</td><td>
+        	</td>
+        	<td>
+				<div align="right">
+					<button type="submit" name="id" value="Aceptar" title="Aceptar">
+						<img src="${tg.url('/images/ok.png')}" alt="Aceptar" width="28" height="28" />
+						<br /> Crear Relaciones
+					</button>
+					<button type="submit" name="vaccion" value="modificar" title="Aceptar">
+						<img src="${tg.url('/images/error.png')}" alt="Cancelar" width="24" height="28" />
+						<br /> Cancelar
+					</button>
+				</div>			
+        	</td></tr></table>
+        </form>	
+  <div style="height:0px; clear:both;"> &nbsp; </div>
+</body>
+</html>

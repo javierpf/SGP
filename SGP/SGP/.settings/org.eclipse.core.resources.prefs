@@ -1,7 +1,8 @@
-#Fri May 13 14:17:24 PYT 2011
+#Sat Jun 04 18:44:34 PYT 2011
 eclipse.preferences.version=1
 encoding//src/SGP/sgp/config/app_cfg.py=utf-8
 encoding//src/SGP/sgp/controllers/root.py=utf-8
+encoding//src/SGP/sgp/controllers/secure.py=utf-8
 encoding//src/SGP/sgp/lib/auth.py=utf-8
 encoding//src/SGP/sgp/model/__init__.py=utf-8
 encoding//src/SGP/sgp/model/auth.py=utf-8

@@ -58,6 +58,7 @@ class RootController(BaseController):
         except:
             session['menu']=[]
             session.save()
+            session['admin_tipo']="ninguno"; session.save()
         return dict(page='index')
     @expose('sgp.templates.pagina_principal')
     def principal(self):

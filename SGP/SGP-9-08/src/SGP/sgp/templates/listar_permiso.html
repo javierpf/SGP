@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Lista de permisos</title>
+</head>
+
+<body>
+  <div id="movie-index">
+    <h2>Lista de permisos</h2>
+    <table class="movie-listing">
+        <thead>
+            <tr><th>Title</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr py:for=" permisos in permiso">
+                <th >${permisos.nombre}</th>
+                <td >${permisos.descripcion}</td>
+            </tr>
+        </tbody>
+    </table>
+  </div>
+  <div class="clearingdiv" />
+</body>
+</html>

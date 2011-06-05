@@ -1,6 +1,6 @@
 from sgp.lib.base import BaseController
 from sgp.model import metadata, DBSession
-from sgp.model.auth import Item,Usuario, Rol, Permiso, Relacion, Atributo, Adjunto
+from sgp.model.auth import Item,Usuario, Rol, Permiso, Relacion, Atributo, Adjunto,Fase, TipoItem
 from sgp import model
 import transaction
 
@@ -79,3 +79,16 @@ class ItemManager():
         
         DBSession.add(adjunto)
         transaction.commit()
+    def generar_codigo(self, idfase, tipo_item):
+        transaction.begin()
+        fase = DBSession.query(Fase).filter(Fase.id_fase == idfase).one()
+        nro = fase.nro_item + 1
+        fase.nro_item = fase.nro_item +1
+        DBSession.merge(fase)
+        transaction.commit()
+        if tipo_item ==-1:
+            codigo = "Gen - " + str(nro)
+        else:
+            tipo = DBSession.query(TipoItem).filter(TipoItem.id_tipo_item == tipo_item).one()   
+            codigo = tipo.prefijo + " - " + str(nro) 
+        return codigo

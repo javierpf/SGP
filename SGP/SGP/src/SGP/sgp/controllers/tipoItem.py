@@ -55,8 +55,8 @@ class TipoItemAddForm(AddRecordForm):
     __omit_fields__ = ['id_TipoItem','TipoItem']
     __omit_fields__= ['campos', 'TipoItem']
     __omit_fields__= ['fase', 'fase']
-    __limit_fields__=['nombre']
-    __field_order__ = ['nombre']
+    __limit_fields__=['nombre', 'descripcion', 'prefijo']
+    __field_order__ = ['nombre', 'descripcion', 'prefijo']
 TipoItem_add_form = TipoItemAddForm(DBSession)
 
 class TipoItemEditForm(EditableForm):
@@ -123,14 +123,19 @@ class TipoItemController(CrudRestController):
         return dict(value_list=value, model="TipoItem")
 
 # ################################################################################################       
-    @expose()
+    @expose('sgp.templates.new_tipo_item')
+    def new(self, *args, **kw):
+        print"New Tipo Item"
+        tmpl_context.widget = self.new_form
+        return dict(nombre = "", descripcion="", prefijo="")    
+    @expose('sgp.templates.new_tipo_item')
     def post(self, **kw):
         rm = TipoItemManager()
         params = kw
-        creo = rm.addSinCampos(params['nombre'], int(session['id_fase']))
+        creo = rm.addSinCampos(params['nombre'], int(session['id_fase']), params['descripcion'], params['prefijo'])
         if not(creo):
-            flash(('Error: Ya existe un tipo de item con el nombre' + params['nombre'] + 'en esta fase.'), 'Error')
-            raise redirect('/tipoItem')
+            flash(('Error: Ya existe un tipo de item con el nombre <<' + params['nombre'] + '>> en esta fase.'), 'Error')
+            return dict(nombre = params['nombre'], descripcion=params['descripcion'], prefijo = params['prefijo'], error = True)
         else:      
             id = rm.getByNombreFase(params['nombre'], int(session['id_fase'])).id_tipo_item
             raise redirect('/tipoItem/' + str(id) + '/campos')

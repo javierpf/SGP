@@ -41,11 +41,19 @@ class TipoItemManager():
         r.fase = FaseManager().getById(id_fase)
         r.campos = self.getListaCampos(id_campos)
         self.add(r)
-    def addSinCampos(self,nombre, id_fase):
+    def addSinCampos(self,nombre, id_fase, descripcion, prefijo):
         print ("Agregar tipo de item: " + nombre + " en la fase " + str(id_fase))
         r = TipoItem()
         r.nombre = nombre
         r.id_fase = id_fase
+        r.descripcion = descripcion
+        if prefijo != "":
+            if len(prefijo) <= 3:
+                r.prefijo = prefijo
+            else:
+                r.prefijo = prefijo[0:3]
+        else:
+            r.prefijo= nombre[0:3]
         r.fase = FaseManager().getById(id_fase)
         b = self.verificaExistencia(id_fase, nombre)
         if not(b)   :

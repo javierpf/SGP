@@ -57,17 +57,17 @@ atributo = Table(u'atributo', metadata,
 
 item = Table(u'item', metadata,
     Column(u'id_item', INTEGER(), primary_key=True, nullable=False),
-    Column(u'codigo', INTEGER()),
     Column(u'identificador', VARCHAR(length=45, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False),
     Column(u'observacion', TEXT(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False),
-    Column(u'estado', INTEGER(), nullable=False),
     Column(u'complejidad', INTEGER(), nullable=False),
     Column(u'id_fase', INTEGER(), ForeignKey('fase.id_fase'), nullable=False),
     Column(u'id_linea_base', INTEGER(), ForeignKey('linea_base.id_linea_base')),
-    Column(u'id_tipo_item', INTEGER(), ForeignKey('tipo_item.id_tipo_item'), nullable=False),
+    Column(u'id_tipo_item', INTEGER(), ForeignKey('tipo_item.id_tipo_item')),
     Column(u'descripcion', TEXT(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False)),
     Column(u'version', INTEGER(), nullable=False),
+    Column(u'estado', VARCHAR(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False)),
     Column(u'actual', VARCHAR(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False)),
+    Column(u'codigo', VARCHAR(length=5, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False),
 )
 
 permiso_recurso = Table(u'permiso_recurso', metadata,
@@ -153,7 +153,8 @@ class Fase(DeclarativeBase):
     descripcion = Column(u'descripcion', TEXT(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False))
     id_fase = Column(u'id_fase', INTEGER(), primary_key=True, nullable=False)
     id_proyecto = Column(u'id_proyecto', INTEGER(), ForeignKey('proyecto.id_proyecto'), nullable=False)
-    
+    nro_item = Column(u'nro_item', INTEGER())
+    orden = Column(u'orden', INTEGER())
     #relation definitions
     items = relationship("Item", backref="fase")
     tipo_items = relation("TipoItem")
@@ -163,7 +164,7 @@ class Item(DeclarativeBase):
 
     #column definitions
     id_item = Column(u'id_item', INTEGER(), primary_key=True, nullable=False),
-    codigo = Column(u'codigo', INTEGER()),
+    codigo = Column(u'codigo', VARCHAR(length=8, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False),
     identificador = Column(u'identificador', VARCHAR(length=45, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False),
     observacion = Column(u'observacion', TEXT(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False),
     estado = Column(u'estado', VARCHAR(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False)),
@@ -279,6 +280,8 @@ class Proyecto(DeclarativeBase):
     fecha_inicio = Column(u'fecha_inicio', DATE())
     id_proyecto = Column(u'id_proyecto', INTEGER(), primary_key=True, nullable=False)
     id_administrador = Column(u'administrador', INTEGER(), ForeignKey('usuario.id_usuario'), nullable=False)
+    nro_fase = Column(u'nro_fase', INTEGER(), nullable=False)
+    prefijo = Column(u'prefijo', VARCHAR(length=3, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
 
     #relation definitions
     fases = relationship("Fase", backref="proyecto")
@@ -309,13 +312,18 @@ class Recurso(DeclarativeBase):
 class Relacion(DeclarativeBase):
     __tablename__ = 'relacion'
 
-    #column definitions
+     #column definitions
+    id_fase1 = Column(u'id_fase1', INTEGER(), nullable=False)
+    id_fase2 = Column(u'id_fase2', INTEGER(), nullable=False)
     id_item1 = Column(u'id_item1', INTEGER(), ForeignKey('item.id_item'), primary_key=True, nullable=False)
     id_item2 = Column(u'id_item2', INTEGER(), ForeignKey('item.id_item'), primary_key=True, nullable=False)
-    tipo_relacion = Column(u'tipo_relacion', INTEGER(), primary_key=True, nullable=False)
+    identificador_item1 = Column(u'identificador_item1', VARCHAR(length=45, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
+    identificador_item2 = Column(u'identificador_item2', VARCHAR(length=45, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
+    tipo_relacion = Column(u'tipo_relacion', VARCHAR(length=20, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), primary_key=True, nullable=False)
 
     #relation definitions
-
+#    item1 = relationship("Item")
+#    item2= relationship("Item")
 
 class Rol(DeclarativeBase):
     __tablename__ = 'rol'
@@ -336,10 +344,11 @@ class TipoItem(DeclarativeBase):
     __tablename__ = 'tipo_item'
 
     #column definitions
+    nombre = Column(u'nombre', VARCHAR(length=30, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
     id_fase = Column(u'id_fase', INTEGER(), ForeignKey('fase.id_fase'), nullable=False)
     id_tipo_item = Column(u'id_tipo_item', INTEGER(), primary_key=True, nullable=False)
-    nombre = Column(u'nombre', VARCHAR(length=30, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False), nullable=False)
-
+    prefijo = Column(u'prefijo', VARCHAR(length=3, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False))
+    descripcion = Column(u'descripcion', TEXT(length=None, convert_unicode=False, assert_unicode=None, unicode_error=None, _warn_on_bytestring=False))
     #relation definitions
     fase = relationship("Fase")
     campos = relationship("Campo", backref=backref("tipo_item", uselist=False))

@@ -20,7 +20,9 @@ from tg.decorators import paginate
 from tg.decorators import without_trailing_slash, with_trailing_slash
 import pylons
 from tg import session
-
+class faselist():
+    nombre = None
+    id = None
 ##############################################################################
 class FaseTable(TableBase):
     __model__ = Fase
@@ -48,7 +50,7 @@ fase_add_form = FaseAddForm(DBSession)
 ##############################################################################
 class FaseEditForm(EditableForm):
     __model__ = Fase
-    __omit_fields__ = ['id_Fase', 'proyecto','items','estado','codigo','tipo_items']
+    __omit_fields__ = ['id_Fase', 'proyecto','items','estado','codigo','tipo_items','nro_item']
 #    __field_order__ = ['nombre','descripcion','permisos']   
 #    __field_attrs__ = {'descripcion':{'rows':'2'}}
 
@@ -201,8 +203,10 @@ class FaseController(CrudRestController):
         fase.descripcion = params['descripcion']
         fase.id_proyecto = session['id_proyecto']
         fase.estado = 'inicial'
+        fase.nro_item=0
+        fase.orden=0
         
-        codigo= cm.generar_codigo()
+        codigo= rm.generarCodigo(session['id_proyecto'])
         print codigo
         
         fase.codigo = codigo
@@ -250,5 +254,35 @@ class FaseController(CrudRestController):
         tmpl_context.widget = self.table_fases
         value = fase_filler.get_value()
         return dict(value_list=value, model="Fase")
-
+    @expose()
+    def terminar(self):
+        print"terminar"
+        print ("id_proyecto:" + session['id_proyecto'])
+        pm=ProyectoManager()
+        p = pm.getById(int(session['id_proyecto']))
+        p.estado = 'iniciado'
+        pm.update(p)
+        raise redirect('/fase/fases_por_proyecto?id_proyecto='+session['id_proyecto'])
     
+    @expose("sgp.templates.ordenar_fases")
+    def ordenar(self):
+        proyecto = ProyectoManager().getById(int(session['id_proyecto']))
+        cantidad = len(proyecto.fases)
+        orden = []
+        for i in range(cantidad):
+            x = i+1
+            orden.append(x)
+        fases = []
+        for f in proyecto.fases:
+            fa = faselist(); fa.nombre =f.nombre; fa.id = f.id_fase 
+            fases.append(fa)
+        print fases
+        print orden
+        return dict(orden = orden, fases=fases)
+    @expose()
+    def s_ordenar(self,*args, **kw):
+        params  = kw
+        for i in params['posicion']:
+            orden, fase = i.split('#')
+            FaseManager().ordenarFase(int(orden), int(fase))
+        self.terminar()
