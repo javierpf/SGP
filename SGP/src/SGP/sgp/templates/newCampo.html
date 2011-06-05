@@ -1,0 +1,80 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<title>${tmpl_context.title} - New ${model}</title>
+<head>
+<style>
+#menu_items {
+  padding:0px 12px 0px 2px;
+  list-style-type:None
+  }
+</style>
+</head>
+<body class="tundra">
+  <div style="height:0px;"> &nbsp; </div>
+
+  <div style="float:left; padding-left:0px;">
+        <ul id="menu_items" py:if="hasattr(tmpl_context, 'menu_items')">
+            <li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s/">$item.__name__</a></li>
+       </ul>
+  </div>
+  <div style="float:left; width:80%">
+					<h3 style="margin-top:1px;">
+						<a href = "/principal">Proyectos</a>
+						<label> / </label>
+						<a href="/fase/fases_por_proyecto?id_proyecto=${session['id_proyecto']}"> ${session['proyecto']} </a>
+						<label> / </label>
+						<a href="/item/items?id_fase=${session['id_fase']}"> ${session['fase']} </a>
+						<label> / </label>
+						<a href= "/tipoItem">Ti: $tipoItem</a>
+						<label> / </label>
+						<a href = "/tipoItem/$id_tipo_item/campos"> Campos</a>
+						<label> / </label>
+						<a> Nuevo Campo</a>
+					</h3>
+				</div>	
+  <div style="float:left;" class="crud_add">
+  <form action="/tipoItem/$id_tipo_item/campos/post" method="post">
+	<table width="300px">
+		<tr><td>
+			<label> Nombre: </label>
+		</td>
+		<td>
+			<input type="text" name="nombre" value="" />
+		</td>
+		</tr>
+		<tr>
+		<td colspan="2">
+			<table>
+				<tr>
+					<td><input type="radio" name="tipo_dato" value="numerico" /> Numerico</td>
+				</tr><tr>
+					<td><input type="radio" name="tipo_dato" value="cadena" /> Cadena</td>
+				</tr><tr>
+					<td><input type="radio" name="tipo_dato" value="date" /> Date</td>
+				</tr>			
+			</table>
+		</td>
+		</tr>
+		<tr>
+		<td colspan="2">
+			<div align="right">
+				<button type="submit" name="tipo" value="Aceptar" title="Aceptar">
+					<img src="${tg.url('/images/ok.png')}" alt="Aceptar" width="28" height="28" />
+					<br /> Aceptar
+				</button>
+				<button type="submit" name="vaccion" value="modificar" title="Aceptar">
+					<img src="${tg.url('/images/error.png')}" alt="Cancelar" width="24" height="28" />
+					<br /> Cancelar
+				</button>
+			</div>			
+		</td>
+		</tr>
+	</table>
+	</form>
+  </div>
+  <div style="height:0px; clear:both;"> &nbsp; </div>
+</body>
+</html>

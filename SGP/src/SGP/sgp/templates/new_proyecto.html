@@ -1,0 +1,97 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<title>${tmpl_context.title} - Nuevo Proyecto</title>
+<head>
+<style>
+#menu_items {
+  padding:0px 12px 0px 2px;
+  list-style-type:None
+  }
+</style>
+</head>
+<body class="tundra">
+  <div style="height:0px;"> &nbsp; </div>
+
+  <div style="float:left; padding-left:0px;">
+        <ul id="menu_items" py:if="hasattr(tmpl_context, 'menu_items')">
+            <li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s/">$item.__name__</a></li>
+       </ul>
+  </div>
+	<div>
+		<span py:choose="">
+			<span py:when="session['admin_sistema']==False">				
+				<h3 style="margin-top:1px;">
+					<a href = "/principal">Administracion de Proyectos</a>
+					<label> / </label>
+					<a> Proyecto Nuevo</a>
+				</h3>
+			</span>
+		</span>
+	</div>		
+  
+  <div style="float:left;" class="crud_add">
+    <h2 style="margin-top:1px;">Nuevo Proyecto</h2>
+    <form action="/proyecto/post" method="post">
+    	<table>
+    		<tr>
+    			<td>
+    				<label> Nombre: </label>
+    			</td>
+    			<td>
+    				<input type="text" name="nombre" value="" />
+    			</td>
+    		</tr>
+    		<tr>
+    			<td>
+    				<label> Descripcion
+    				</label>
+    			</td>
+    			<td>
+    				<TEXTAREA COLS="40" ROWS="10" NAME="descripcion"></TEXTAREA>
+    			</td>
+    		</tr>
+    		<tr>
+    			<td>
+    				<label> Administrador: </label>
+    			</td>
+    			<td>
+					<select size="1" name="administrador" >
+						<span py:for="u in usuarios">									
+							<option value="${u.id_usuario}"> $u.nombre </option>
+						</span>
+					</select>	
+    			</td>
+    		</tr>
+    		<tr>
+    			<td>
+    				<label> Prefijo: </label>
+    			</td>
+    			<td>
+    				<input type="text" name="prefijo" value="" />
+    			</td>
+    		</tr>
+    		<tr><td align="center">
+					<div align="center">
+						<button type="submit" name="tipo" value="Aceptar" title="Aceptar">
+							<img src="${tg.url('/images/ok.png')}" alt="Aceptar" width="28" height="28" />
+							<br /> Aceptar
+						</button>
+					</div>
+					</td>
+					<td align="rigth">
+					<div>
+						<button type="submit" name="vaccion" value="modificar" title="Aceptar">
+							<img src="${tg.url('/images/error.png')}" alt="Cancelar" width="24" height="28" />
+							<br /> Cancelar
+						</button>
+					</div>
+    		</td></tr>
+    	</table>
+    </form>
+  </div>
+  <div style="height:0px; clear:both;"> &nbsp; </div>
+</body>
+</html>

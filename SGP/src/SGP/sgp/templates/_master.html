@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      py:strip="">
+    <xi:include href="header.html" />
+    <xi:include href="menu.html" />
+    <xi:include href="footer.html" />
+   
+<head py:match="head" py:attrs="select('@*')">
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+    <title py:replace="''">Your title goes here</title>
+    <meta py:replace="select('*')"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/style.css')}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/bluetabs.css')}" />
+    <script type="text/javascript" src="${tg.url('/javascripts/dropdowntabs.js')}" ></script>
+    <link rel="stylesheet" type="text/css" href="/toscawidgets/resources/tw.forms/static/grid.css" media="all" />
+    <style>
+		#menu_items {
+			padding:0px 12px 0px 2px;
+			list-style-type:None
+		}
+	</style>
+
+    
+<!-- menu principal -->
+	<link rel="stylesheet" type="text/css" href="${tg.url('/css/ddsmoothmenu.css')}" />
+	<link rel="stylesheet" type="text/css" href="${tg.url('/css/ddsmoothmenu-v.css')}" />
+	<script type="text/javascript" src="${tg.url('/javascripts/jquery.min.js')}"></script>
+	<script type="text/javascript" src="${tg.url('/javascripts/ddsmoothmenu.js')}"></script>
+	<script type="text/javascript">
+	ddsmoothmenu.init({
+		mainmenuid: "menu01", //menu DIV id
+		orientation: 'h', //Horizontal or vertical menu: Set to "h" or "v"
+		classname: 'ddsmoothmenu', //class added to menu's outer DIV
+		//customtheme: ["#a7a7a7", "#666666"],
+		shadow: {enable:true, offsetx:0, offsety:0}, //enable shadow?
+		contentsource: "markup" //"markup" or ["container_id", "path_to_menu_file"]
+		})
+	</script>
+<!-- fin del menu principal -->
+    
+</head>
+
+<body py:match="body" py:attrs="select('@*')">
+  ${header()}
+   
+  ${f_menu()}
+ 
+
+  <div id="content">
+    <py:if test="defined('page')">
+    <div class="currentpage">
+     Now Viewing: <span py:replace="page"/>
+     </div>
+    </py:if>
+    <py:with vars="flash=tg.flash_obj.render('flash', use_js=False)">
+        <div py:if="flash" py:content="XML(flash)" />
+    </py:with>
+    <div py:replace="select('*|text()')"/>
+    <!-- End of content -->
+    ${footer()}
+  </div>
+</body>
+</html>

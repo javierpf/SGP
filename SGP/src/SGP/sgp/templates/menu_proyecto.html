@@ -1,0 +1,24 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      py:strip="">
+<py:def function="menu_proyecto">
+		<table width="100%" align="rigth">
+			<tr>
+	    		<td align="center">
+	    			<a href="/usuario">
+                		<img src="${tg.url('/images/usuarios.png')}" width="40" height="40" alt="Usuarios" />
+            		</a>
+            	</td>
+            	<td align="center">
+            		<a href="/rol?id_proyecto=${session['id_proyecto']}">
+                		<img src="${tg.url('/images/roles.png')}" width="40" height="40" alt="ABM Permisos" />
+            		</a>
+            	</td>       	
+            </tr>
+            <tr>
+            	<td align="center"><label> Usuarios </label></td>
+            	<td align="center"><label> Roles </label></td>
+            </tr>
+         </table>
+</py:def>
+</html>

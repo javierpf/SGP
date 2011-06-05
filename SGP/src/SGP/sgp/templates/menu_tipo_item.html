@@ -1,0 +1,30 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/5001/XInclude"
+      py:strip="">
+<py:def function="menu_tipo_item">
+			<table>
+				<tr>
+					<td style="padding:0px 70px 0px 10px;">					
+						<form action= "/tipoItem/buscar" method="post" >
+							<input type="text" name="parametro"  onclick="this.value=''" value="Introducir el nombre" />
+								<button type="submit" value="Buscar">
+								<img src="${tg.url('/images/buscar.png')}" width="28" height="28" alt="ABM Usuarios" />            		
+							</button>
+						</form>
+					</td>
+					<td>
+						<a href="/tipoItem/new">
+							<img src="${tg.url('/images/agregar.png')}" width="48" height="48" title="Nuevo Tipo de Item" />
+							<br /> Nuevo            		
+						</a>
+					</td>			
+					<td style="padding:0px 70px 0px 10px;">					
+							<a href="/tipoItem/importar" value="Importar">
+								<img src="${tg.url('/images/importar.png')}" width="48" height="48" alt="ABM Usuarios" />
+								<br /> Importar
+							</a>
+					</td>								
+				</tr>
+			</table>
+	</py:def>
+</html>

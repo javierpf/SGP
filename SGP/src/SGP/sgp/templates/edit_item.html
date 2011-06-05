@@ -1,0 +1,139 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="master.html" />
+  <xi:include href="menu_tipo_item.html" />
+<head>
+	<title></title>
+
+	<style>
+	#menu_items {
+		padding:0px 12px 0px 2px;
+		list-style-type:None
+		}
+</style>
+</head>
+	<body class="tundra">
+		<div style="height:0px;"> &nbsp; </div>
+		<div id="main_content">
+			<div>
+				<span py:choose="">
+  					<span py:when="session['admin_sistema']==False">				
+						<h3 style="margin-top:1px;">
+							<a href = "/principal">Proyectos</a>
+							<label> / </label>
+							<a href="/fase/fases_por_proyecto?id_proyecto=${session['id_proyecto']}"> ${session['proyecto']} </a>
+							<label> / </label>
+							<a href="/item/items?id_fase=${session['id_fase']}"> ${session['fase']} </a>
+							<label> / </label>
+							<a> Editar un Item</a>
+						</h3>
+					</span>
+				</span>
+			</div>
+			<div style="float:left; padding-left:0px;">
+				<ul id="menu_items" py:if="hasattr(tmpl_context, 'menu_items')">
+					<li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s">$item.__name__</a></li>
+				</ul>
+			</div>
+			<div>
+     			<form action="/item/$item.id_item/put" method="post" class="required tableform" enctype="multipart/form-data"> 
+    				<div> 
+            			<input type="hidden" name="sprox_id" class="hiddenfield" id="sprox_id" value="" /> 
+	            		<input type="hidden" name="_method" class="sproxmethodputhiddenfield" id="_method" value="PUT" /> 
+    				</div> 
+    				<table border="0" cellspacing="0" cellpadding="2"> 
+        				<tr id="identificador.container" class="even" title=""> 
+            				<td class="labelcol"> 
+                				<label id="identificador.label" for="identificador" class="fieldlabel required">Identificador</label> 
+            				</td> 
+	            			<td class="fieldcol"> 
+    	            			<input type="text" name="identificador" class="textfield required" id="identificador" value="${item.identificador}" /> 
+        	    			</td> 
+        				</tr><tr id="observacion.container" class="odd" title=""> 
+           					<td class="labelcol"> 
+                				<label id="observacion.label" for="observacion" class="fieldlabel required">Observacion</label> 
+            				</td> 
+	            			<td class="fieldcol"> 
+    	            			<textarea id="observacion" name="observacion" class="required textarea" rows="7" cols="50">${item.observacion}</textarea> 
+        	    			</td> 
+        				</tr><tr id="complejidad.container" class="even" title=""> 
+            				<td class="labelcol"> 
+                				<label id="complejidad.label" for="complejidad" class="fieldlabel required">Complejidad</label> 
+            				</td> 
+	            			<td class="fieldcol"> 
+    	            			<input type="text" name="complejidad" class="textfield required" id="complejidad" value="${item.complejidad}" /> 
+        	    			</td> 
+        				</tr><tr id="descripcion.container" class="odd" title=""> 
+	            			<td class="labelcol"> 
+    	            			<label id="descripcion.label" for="descripcion" class="fieldlabel">Descripcion</label> 
+        	    			</td> 
+            				<td class="fieldcol"> 
+	                			<textarea id="descripcion" name="descripcion" class="textarea" rows="7" cols="50">${item.descripcion}</textarea> 
+    	        			</td> 
+        				</tr><tr id="adjuntos.container" class="even" title=""> 
+            				<td class="labelcol"> 
+	                			<label id="adjuntos.label" for="adjuntos" class="fieldlabel">Adjuntos</label> 
+    	        			</td>	 
+        	    			<td class="fieldcol">
+        	    				<table>
+        	    					<tr>
+        	    						<td>
+        	    							<select name="adjuntos" class="propertymultipleselectfield" id="adjuntos" size="5"></select>       	    						
+        	    						</td>
+			             				<td>    	
+			             					<div align="right">
+												<button type="submit" name="submit" value="Adjuntar">
+													<img src="${tg.url('/images/adjunto.png')}" alt="Aceptar" width="28" height="28" />
+													<br /> Adjuntar
+												</button>
+											</div>
+										</td>
+        	    					</tr>
+        	    				</table>
+            				</td>
+								<table>
+        							<div xmlns:py="http://genshi.edgewall.org/" py:for="i in campos">
+	       								<tr>	
+											<td> 
+												<label> ${i.campo} </label>         			
+											</td>
+											<td>
+												<label> ( ${i.tipo} ) </label>
+											</td>
+    	    								<td>
+												<input type="text" name="${i.campo}" class="textfield required" value="${i.valor}" />
+											</td>	        		
+        								</tr>
+									</div>	
+        						</table>
+        					</tr>
+	    			</table> 
+	    			<table>
+	    			<tr id="submit.container" class="odd" title=""> 
+	            			<td class="labelcol"></td> 
+            				<td class="fieldcol"> 
+	            				<div align="right">
+									<button type="submit" name="submit" value="Submit" title="Aceptar">
+										<img src="${tg.url('/images/ok.png')}" alt="Aceptar" width="28" height="28" />
+										<br /> Aceptar
+									</button>
+								</div>	
+            				</td>
+            				<td>
+								<form action="/item/items?id_fase=${id_fase}" method="post">
+						        	<button type="submit" name="cancelar" value="cancelar" title="Cancelar">
+										<img src="${tg.url('/images/error.png')}" alt="Cancelar" width="24" height="28" />
+										<br /> Cancelar
+									</button>	         
+								</form>            				
+            				</td> 
+        				</tr> 
+	    			</table>
+				</form> 
+  		</div>
+	</div> 
+  	<div style="height:0px; clear:both;"> &nbsp; </div>
+
+	</body> 
+</html>
